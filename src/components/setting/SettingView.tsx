@@ -21,12 +21,20 @@ import {
   ShieldCheck,
   Globe,
   HelpCircle,
-  Users
+  Users,
+  Contact,
+  FileCode,
+  UserCheck,
+  ChevronRight,
+  ArrowLeft,
+  BookOpen
 } from 'lucide-react';
-import { RestaurantProfile, PrinterConfig, MenuItem, MenuCategory } from '../../types';
+import { RestaurantProfile, PrinterConfig, MenuItem, MenuCategory, ResidentData, UserProfile } from '../../types';
 import { PrinterService } from '../../services/printer';
 import { UpdateService, UpdateInfo, APP_CURRENT_VERSION, APP_BUILD_NUMBER } from '../../services/updateService';
 import { UpdateModal } from '../UpdateModal';
+import { WargaView } from '../appqu/WargaView';
+import { ArsitekturView } from '../appqu/ArsitekturView';
 
 interface SettingViewProps {
   profile: RestaurantProfile;
@@ -35,6 +43,16 @@ interface SettingViewProps {
   onSavePrinterConfig: (config: PrinterConfig) => void;
   menuList: MenuItem[];
   onSaveMenu: (menu: MenuItem[]) => void;
+  // AppQu Governance & Community Integration
+  currentUser?: UserProfile;
+  residents?: ResidentData[];
+  onUpdateResidents?: (residents: ResidentData[]) => void;
+  onOpenRoleModal?: () => void;
+  onOpenHierarchy?: () => void;
+  witnessCount?: number;
+  onNavigateToModule?: (module: 'paguyuban' | 'warga' | 'usaha' | 'area' | 'siaga' | 'chat' | 'arsitektur') => void;
+  showNotification?: (msg: string) => void;
+  initialSubTab?: 'komunitas' | 'warga' | 'skema' | 'toko' | 'menu' | 'printer' | 'update';
 }
 
 export const SettingView: React.FC<SettingViewProps> = ({
@@ -44,8 +62,19 @@ export const SettingView: React.FC<SettingViewProps> = ({
   onSavePrinterConfig,
   menuList,
   onSaveMenu,
+  currentUser,
+  residents,
+  onUpdateResidents,
+  onOpenRoleModal,
+  onOpenHierarchy,
+  witnessCount = 2,
+  onNavigateToModule,
+  showNotification,
+  initialSubTab,
 }) => {
-  const [activeSubTab, setActiveSubTab] = useState<'toko' | 'menu' | 'printer' | 'update'>('toko');
+  const [activeSubTab, setActiveSubTab] = useState<
+    'komunitas' | 'warga' | 'skema' | 'toko' | 'menu' | 'printer' | 'update'
+  >(() => initialSubTab || (currentUser ? 'komunitas' : 'toko'));
 
   // Update & Auto-Release states
   const [repoInput, setRepoInput] = useState<string>(UpdateService.getGitHubRepo());
@@ -254,55 +283,361 @@ export const SettingView: React.FC<SettingViewProps> = ({
   return (
     <div className="flex-1 flex flex-col overflow-y-auto p-3.5 space-y-3 pb-24 text-stone-900">
       {/* Sub-Tabs Switcher */}
-      <div className="grid grid-cols-4 gap-1 bg-stone-200/80 p-1 rounded-2xl shrink-0">
-        <button
-          onClick={() => setActiveSubTab('toko')}
-          className={`py-2 px-1 rounded-xl text-[11px] font-bold transition-all flex items-center justify-center gap-1 ${
-            activeSubTab === 'toko'
-              ? 'bg-white text-stone-900 shadow-xs'
-              : 'text-stone-600 hover:text-stone-900'
-          }`}
-        >
-          <Store className="w-3.5 h-3.5 text-amber-600 shrink-0" />
-          <span className="truncate">Profil</span>
-        </button>
+      {currentUser ? (
+        <div className="flex gap-1.5 bg-stone-200/90 p-1.5 rounded-2xl shrink-0 overflow-x-auto no-scrollbar">
+          <button
+            type="button"
+            onClick={() => setActiveSubTab('komunitas')}
+            className={`py-2 px-3 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 shrink-0 cursor-pointer ${
+              activeSubTab === 'komunitas'
+                ? 'bg-emerald-800 text-white shadow-xs'
+                : 'text-stone-700 hover:text-stone-950 hover:bg-stone-300/60'
+            }`}
+          >
+            <ShieldCheck className="w-4 h-4 text-emerald-300 shrink-0" />
+            <span>Opsi Komunitas</span>
+          </button>
 
-        <button
-          onClick={() => setActiveSubTab('menu')}
-          className={`py-2 px-1 rounded-xl text-[11px] font-bold transition-all flex items-center justify-center gap-1 ${
-            activeSubTab === 'menu'
-              ? 'bg-white text-stone-900 shadow-xs'
-              : 'text-stone-600 hover:text-stone-900'
-          }`}
-        >
-          <UtensilsCrossed className="w-3.5 h-3.5 text-red-600 shrink-0" />
-          <span className="truncate">Menu</span>
-        </button>
+          <button
+            type="button"
+            onClick={() => setActiveSubTab('warga')}
+            className={`py-2 px-3 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 shrink-0 cursor-pointer ${
+              activeSubTab === 'warga'
+                ? 'bg-sky-700 text-white shadow-xs'
+                : 'text-stone-700 hover:text-stone-950 hover:bg-stone-300/60'
+            }`}
+          >
+            <Contact className="w-4 h-4 text-sky-400 shrink-0" />
+            <span>Buku Warga</span>
+          </button>
 
-        <button
-          onClick={() => setActiveSubTab('printer')}
-          className={`py-2 px-1 rounded-xl text-[11px] font-bold transition-all flex items-center justify-center gap-1 ${
-            activeSubTab === 'printer'
-              ? 'bg-white text-stone-900 shadow-xs'
-              : 'text-stone-600 hover:text-stone-900'
-          }`}
-        >
-          <Printer className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
-          <span className="truncate">Printer</span>
-        </button>
+          <button
+            type="button"
+            onClick={() => setActiveSubTab('skema')}
+            className={`py-2 px-3 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 shrink-0 cursor-pointer ${
+              activeSubTab === 'skema'
+                ? 'bg-indigo-700 text-white shadow-xs'
+                : 'text-stone-700 hover:text-stone-950 hover:bg-stone-300/60'
+            }`}
+          >
+            <FileCode className="w-4 h-4 text-indigo-300 shrink-0" />
+            <span>Skema DB</span>
+          </button>
 
-        <button
-          onClick={() => setActiveSubTab('update')}
-          className={`py-2 px-1 rounded-xl text-[11px] font-bold transition-all flex items-center justify-center gap-1 relative ${
-            activeSubTab === 'update'
-              ? 'bg-white text-stone-900 shadow-xs'
-              : 'text-stone-600 hover:text-stone-900'
-          }`}
-        >
-          <Sparkles className="w-3.5 h-3.5 text-teal-600 shrink-0" />
-          <span className="truncate">Update APK</span>
-        </button>
-      </div>
+          <button
+            type="button"
+            onClick={() => setActiveSubTab('printer')}
+            className={`py-2 px-3 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 shrink-0 cursor-pointer ${
+              activeSubTab === 'printer'
+                ? 'bg-emerald-700 text-white shadow-xs'
+                : 'text-stone-700 hover:text-stone-950 hover:bg-stone-300/60'
+            }`}
+          >
+            <Printer className="w-4 h-4 text-emerald-300 shrink-0" />
+            <span>Printer</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setActiveSubTab('update')}
+            className={`py-2 px-3 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 shrink-0 cursor-pointer relative ${
+              activeSubTab === 'update'
+                ? 'bg-teal-700 text-white shadow-xs'
+                : 'text-stone-700 hover:text-stone-950 hover:bg-stone-300/60'
+            }`}
+          >
+            <Sparkles className="w-4 h-4 text-teal-300 shrink-0" />
+            <span>Update APK</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setActiveSubTab('toko')}
+            className={`py-2 px-3 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 shrink-0 cursor-pointer ${
+              activeSubTab === 'toko'
+                ? 'bg-amber-700 text-white shadow-xs'
+                : 'text-stone-700 hover:text-stone-950 hover:bg-stone-300/60'
+            }`}
+          >
+            <Store className="w-4 h-4 text-amber-300 shrink-0" />
+            <span>Profil Unit</span>
+          </button>
+        </div>
+      ) : (
+        <div className="grid grid-cols-4 gap-1 bg-stone-200/80 p-1 rounded-2xl shrink-0">
+          <button
+            type="button"
+            onClick={() => setActiveSubTab('toko')}
+            className={`py-2 px-1 rounded-xl text-[11px] font-bold transition-all flex items-center justify-center gap-1 cursor-pointer ${
+              activeSubTab === 'toko'
+                ? 'bg-white text-stone-900 shadow-xs'
+                : 'text-stone-600 hover:text-stone-900'
+            }`}
+          >
+            <Store className="w-3.5 h-3.5 text-amber-600 shrink-0" />
+            <span className="truncate">Profil</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setActiveSubTab('menu')}
+            className={`py-2 px-1 rounded-xl text-[11px] font-bold transition-all flex items-center justify-center gap-1 cursor-pointer ${
+              activeSubTab === 'menu'
+                ? 'bg-white text-stone-900 shadow-xs'
+                : 'text-stone-600 hover:text-stone-900'
+            }`}
+          >
+            <UtensilsCrossed className="w-3.5 h-3.5 text-red-600 shrink-0" />
+            <span className="truncate">Menu</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setActiveSubTab('printer')}
+            className={`py-2 px-1 rounded-xl text-[11px] font-bold transition-all flex items-center justify-center gap-1 cursor-pointer ${
+              activeSubTab === 'printer'
+                ? 'bg-white text-stone-900 shadow-xs'
+                : 'text-stone-600 hover:text-stone-900'
+            }`}
+          >
+            <Printer className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+            <span className="truncate">Printer</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setActiveSubTab('update')}
+            className={`py-2 px-1 rounded-xl text-[11px] font-bold transition-all flex items-center justify-center gap-1 cursor-pointer ${
+              activeSubTab === 'update'
+                ? 'bg-white text-stone-900 shadow-xs'
+                : 'text-stone-600 hover:text-stone-900'
+            }`}
+          >
+            <Sparkles className="w-3.5 h-3.5 text-teal-600 shrink-0" />
+            <span className="truncate">Update APK</span>
+          </button>
+        </div>
+      )}
+
+      {/* TAB 0: OPSI KOMUNITAS (WARGA, ROLE, 2 SAKSI, SKEMA) */}
+      {activeSubTab === 'komunitas' && (
+        <div className="space-y-3 animate-in fade-in duration-150">
+          {/* Header Banner */}
+          <div className="p-4 rounded-3xl bg-gradient-to-r from-emerald-950 via-stone-900 to-teal-950 text-white shadow-md border border-emerald-800/40 space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-400 bg-emerald-900/60 px-2.5 py-0.5 rounded-full border border-emerald-700/50">
+                Pusat Tata Kelola & Opsi
+              </span>
+              <span className="text-[11px] font-mono text-emerald-300">RT 04 / RW 09</span>
+            </div>
+            <h2 className="text-base font-black text-white leading-tight">
+              Tata Kelola Komunitas & Pengaturan
+            </h2>
+            <p className="text-xs text-emerald-100/80 leading-relaxed">
+              Manajemen buku induk warga, ganti peran (role switcher), validasi 2 saksi tetangga, arsitektur sistem, printer struk, dan pembaruan aplikasi.
+            </p>
+          </div>
+
+          {/* 4 Interactive Hub Cards for Warga, Role, 2 Saksi, Skema */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+            {/* Card 1: Buku Induk WargaQu */}
+            <div className="p-4 rounded-3xl bg-white border border-stone-200 shadow-xs flex flex-col justify-between space-y-3">
+              <div className="space-y-1.5">
+                <div className="flex items-center justify-between">
+                  <div className="w-10 h-10 rounded-2xl bg-sky-100 text-sky-700 flex items-center justify-center font-bold">
+                    <Contact className="w-5 h-5 text-sky-700" />
+                  </div>
+                  <span className="px-2 py-0.5 rounded-full bg-sky-50 text-sky-800 font-bold text-[10px] border border-sky-200">
+                    {residents?.length || 48} Warga Terdaftar
+                  </span>
+                </div>
+                <h3 className="text-sm font-extrabold text-stone-900">
+                  Buku Induk WargaQu
+                </h3>
+                <p className="text-[11px] text-stone-600 leading-relaxed">
+                  Direktori kependudukan warga RT 04: NIK, nomor KK, alamat rumah, status domisili (tetap/kontrak/kos), dan kartu tanda warga digital ber-QR.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setActiveSubTab('warga')}
+                className="w-full py-2.5 px-3 bg-sky-600 hover:bg-sky-500 active:scale-98 text-white rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 shadow-xs cursor-pointer transition-all"
+              >
+                <BookOpen className="w-3.5 h-3.5" />
+                <span>Buka Buku Induk Warga</span>
+              </button>
+            </div>
+
+            {/* Card 2: Ganti Peran (Role Switcher) */}
+            <div className="p-4 rounded-3xl bg-white border border-stone-200 shadow-xs flex flex-col justify-between space-y-3">
+              <div className="space-y-1.5">
+                <div className="flex items-center justify-between">
+                  <div className="w-10 h-10 rounded-2xl bg-teal-100 text-teal-700 flex items-center justify-center font-bold">
+                    <UserCheck className="w-5 h-5 text-teal-700" />
+                  </div>
+                  <span className="px-2 py-0.5 rounded-full bg-teal-50 text-teal-800 font-bold text-[10px] border border-teal-200">
+                    {currentUser?.roleTier === 'tier2_pengurus_rt' ? 'Tier 2: Pengurus' : 'Tier 1: Warga'}
+                  </span>
+                </div>
+                <h3 className="text-sm font-extrabold text-stone-900">
+                  Ganti Peran Pengguna (Role)
+                </h3>
+                <p className="text-[11px] text-stone-600 leading-relaxed">
+                  Peran aktif: <strong className="text-stone-900">{currentUser?.roleTitle || currentUser?.name || 'Warga RT 04'}</strong>. Beralih peran antara Warga Biasa, Ketua RT, Hansip, Relawan, dan Pedagang Lapak.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  if (onOpenRoleModal) onOpenRoleModal();
+                }}
+                className="w-full py-2.5 px-3 bg-teal-700 hover:bg-teal-600 active:scale-98 text-white rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 shadow-xs cursor-pointer transition-all"
+              >
+                <UserCheck className="w-3.5 h-3.5" />
+                <span>Ganti Peran Pengguna (Role)</span>
+              </button>
+            </div>
+
+            {/* Card 3: Validasi Berantai (2 Saksi) */}
+            <div className="p-4 rounded-3xl bg-white border border-stone-200 shadow-xs flex flex-col justify-between space-y-3">
+              <div className="space-y-1.5">
+                <div className="flex items-center justify-between">
+                  <div className="w-10 h-10 rounded-2xl bg-purple-100 text-purple-700 flex items-center justify-center font-bold">
+                    <ShieldCheck className="w-5 h-5 text-purple-700" />
+                  </div>
+                  <span className="px-2 py-0.5 rounded-full bg-purple-50 text-purple-800 font-bold text-[10px] border border-purple-200">
+                    {witnessCount >= 2 ? '2/2 Saksi Lengkap' : '0/2 Saksi (Menunggu)'}
+                  </span>
+                </div>
+                <h3 className="text-sm font-extrabold text-stone-900">
+                  Validasi 2 Saksi (Chain of Trust)
+                </h3>
+                <p className="text-[11px] text-stone-600 leading-relaxed">
+                  Rantai kepercayaan warga lokal tanpa pihak ketiga: Setiap akun baru divalidasi oleh 2 tetangga berstatus tetap dan disahkan oleh pengurus RT.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  if (onOpenHierarchy) onOpenHierarchy();
+                }}
+                className="w-full py-2.5 px-3 bg-purple-700 hover:bg-purple-600 active:scale-98 text-white rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 shadow-xs cursor-pointer transition-all"
+              >
+                <ShieldCheck className="w-3.5 h-3.5" />
+                <span>Buka Skema 2 Saksi & Hierarki</span>
+              </button>
+            </div>
+
+            {/* Card 4: Skema & Arsitektur Sistem */}
+            <div className="p-4 rounded-3xl bg-white border border-stone-200 shadow-xs flex flex-col justify-between space-y-3">
+              <div className="space-y-1.5">
+                <div className="flex items-center justify-between">
+                  <div className="w-10 h-10 rounded-2xl bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold">
+                    <FileCode className="w-5 h-5 text-indigo-700" />
+                  </div>
+                  <span className="px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-800 font-bold text-[10px] border border-indigo-200">
+                    Offline-First & P2P
+                  </span>
+                </div>
+                <h3 className="text-sm font-extrabold text-stone-900">
+                  Skema & Arsitektur Sistem
+                </h3>
+                <p className="text-[11px] text-stone-600 leading-relaxed">
+                  Dokumentasi teknis bagan arsitektur modular, skema penyimpanan IndexedDB lokal di HP, dan protokol real-time tanpa biaya server.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setActiveSubTab('skema')}
+                className="w-full py-2.5 px-3 bg-indigo-700 hover:bg-indigo-600 active:scale-98 text-white rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 shadow-xs cursor-pointer transition-all"
+              >
+                <FileCode className="w-3.5 h-3.5" />
+                <span>Lihat Dokumen Skema Sistem</span>
+              </button>
+            </div>
+          </div>
+
+          {/* Quick Hardware & Update Tools */}
+          <div className="p-4 rounded-3xl bg-stone-50 border border-stone-200 space-y-2">
+            <h4 className="text-xs font-extrabold text-stone-900 uppercase tracking-wider">
+              Perangkat Keras & Pembaruan
+            </h4>
+            <div className="grid grid-cols-2 gap-2">
+              <button
+                type="button"
+                onClick={() => setActiveSubTab('printer')}
+                className="p-3 bg-white hover:bg-stone-100 border border-stone-200 rounded-2xl text-left flex items-center gap-2.5 cursor-pointer transition-all"
+              >
+                <Printer className="w-5 h-5 text-emerald-600 shrink-0" />
+                <div>
+                  <p className="text-xs font-bold text-stone-900">Printer Thermal</p>
+                  <p className="text-[10px] text-stone-500">Cetak Bluetooth 58/80mm</p>
+                </div>
+              </button>
+              <button
+                type="button"
+                onClick={() => setActiveSubTab('update')}
+                className="p-3 bg-white hover:bg-stone-100 border border-stone-200 rounded-2xl text-left flex items-center gap-2.5 cursor-pointer transition-all"
+              >
+                <Sparkles className="w-5 h-5 text-teal-600 shrink-0" />
+                <div>
+                  <p className="text-xs font-bold text-stone-900">Update APK</p>
+                  <p className="text-[10px] text-stone-500">Auto-Release & Multi-Akun</p>
+                </div>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* TAB: BUKU INDUK WARGAQU */}
+      {activeSubTab === 'warga' && (
+        <div className="space-y-3 animate-in fade-in duration-150">
+          <div className="flex items-center justify-between p-2.5 bg-white rounded-2xl border border-stone-200 shadow-2xs">
+            <button
+              type="button"
+              onClick={() => setActiveSubTab('komunitas')}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-stone-100 hover:bg-stone-200 text-stone-800 text-xs font-bold transition-all cursor-pointer"
+            >
+              <ArrowLeft className="w-3.5 h-3.5" />
+              <span>Kembali ke Opsi</span>
+            </button>
+            <span className="text-xs font-bold text-stone-700">Buku Induk WargaQu</span>
+          </div>
+
+          {currentUser && residents ? (
+            <WargaView
+              currentUser={currentUser}
+              residents={residents}
+              onUpdateResidents={onUpdateResidents || (() => {})}
+              showNotification={showNotification || (() => {})}
+            />
+          ) : (
+            <div className="p-8 text-center bg-white rounded-3xl border border-stone-200">
+              <Contact className="w-10 h-10 text-sky-600 mx-auto mb-2" />
+              <p className="text-sm font-bold text-stone-800">Data Warga Belum Tersedia</p>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* TAB: DOKUMEN ARSITEKTUR & SKEMA */}
+      {activeSubTab === 'skema' && (
+        <div className="space-y-3 animate-in fade-in duration-150">
+          <div className="flex items-center justify-between p-2.5 bg-white rounded-2xl border border-stone-200 shadow-2xs">
+            <button
+              type="button"
+              onClick={() => setActiveSubTab('komunitas')}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-stone-100 hover:bg-stone-200 text-stone-800 text-xs font-bold transition-all cursor-pointer"
+            >
+              <ArrowLeft className="w-3.5 h-3.5" />
+              <span>Kembali ke Opsi</span>
+            </button>
+            <span className="text-xs font-bold text-stone-700">Skema & Arsitektur Sistem</span>
+          </div>
+          <ArsitekturView />
+        </div>
+      )}
 
       {/* TAB 1: PROFIL RESTO */}
       {activeSubTab === 'toko' && (

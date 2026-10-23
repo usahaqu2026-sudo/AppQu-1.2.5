@@ -20,6 +20,10 @@ import {
   LayoutGrid,
   Compass,
   MessageSquare,
+  Flame,
+  UtensilsCrossed,
+  Truck,
+  Scissors,
 } from 'lucide-react';
 import { LocalBusiness, UserProfile, LocalProduct, BusinessMode } from '../../types';
 
@@ -30,6 +34,9 @@ interface UsahaQuViewProps {
   onSwitchToBengkelQu: () => void;
   onSwitchToKlinikQu: () => void;
   onSwitchToRitelQu: () => void;
+  onSwitchToKulinerQu?: () => void;
+  onSwitchToTransportasiQu?: () => void;
+  onSwitchToPelayananQu?: () => void;
   onOpenAreaQu?: () => void;
   onOpenChat?: (threadId?: string) => void;
   onUpdateBusinesses: (businesses: LocalBusiness[]) => void;
@@ -43,6 +50,9 @@ export const UsahaQuView: React.FC<UsahaQuViewProps> = ({
   onSwitchToBengkelQu,
   onSwitchToKlinikQu,
   onSwitchToRitelQu,
+  onSwitchToKulinerQu,
+  onSwitchToTransportasiQu,
+  onSwitchToPelayananQu,
   onOpenAreaQu,
   onOpenChat,
   onUpdateBusinesses,
@@ -62,7 +72,15 @@ export const UsahaQuView: React.FC<UsahaQuViewProps> = ({
   const [newBizDesc, setNewBizDesc] = useState('');
 
   const filteredBusinesses = businesses.filter((b) => {
-    if (activeCategory !== 'all' && b.category !== activeCategory) return false;
+    if (activeCategory !== 'all') {
+      if (activeCategory === 'jasa') {
+        if (b.category !== 'jasa' && b.category !== 'laundry' && b.posModuleKey !== 'pelayananqu') return false;
+      } else if (activeCategory === 'kuliner') {
+        if (b.category !== 'kuliner' && b.posModuleKey !== 'kulinerqu' && b.posModuleKey !== 'baksoqu') return false;
+      } else if (b.category !== activeCategory) {
+        return false;
+      }
+    }
     if (modeFilter === 'mode_a' && b.businessMode === 'mode_b_katalog') return false;
     if (modeFilter === 'mode_b' && b.businessMode !== 'mode_b_katalog') return false;
     return true;
@@ -103,49 +121,91 @@ export const UsahaQuView: React.FC<UsahaQuViewProps> = ({
   return (
     <div className="flex-1 flex flex-col bg-stone-100 overflow-y-auto">
       {/* ========================================================= */}
-      {/* USAHAQU - LIST VIEW HANYA LOGO/IKON & NAMA                */}
+      {/* USAHAQU - LIST VIEW MINIMALIS TANPA KOTAK                 */}
       {/* ========================================================= */}
-      <div className="p-3.5 bg-white border-b border-stone-200 shadow-2xs shrink-0 space-y-2.5">
-        {/* Header UsahaQu (sebelumnya Switch Master Unit Usaha) */}
+      <div className="p-3.5 bg-white border-b border-stone-200 shrink-0 space-y-2">
+        {/* Header UsahaQu */}
         <div className="flex items-center justify-between px-1">
           <div className="flex items-center gap-2 text-stone-900 font-bold uppercase tracking-wider">
             <Store className="w-4 h-4 text-emerald-700 shrink-0" />
             <h2 className="text-base font-black tracking-tight text-stone-900">UsahaQu</h2>
           </div>
-          <span className="text-xs bg-stone-100 text-stone-600 font-bold px-2.5 py-0.5 rounded-full">
-            4 Unit Usaha
+          <span className="text-xs bg-stone-100 text-stone-700 font-extrabold px-2.5 py-0.5 rounded-full border border-stone-200">
+            7 Unit Usaha
           </span>
         </div>
 
-        {/* List View: Hanya Logo/Ikon dan Nama */}
-        <div className="divide-y divide-stone-100 bg-stone-50/70 rounded-2xl border border-stone-200/80 overflow-hidden shadow-2xs">
+        {/* List View: Minimalis tanpa kotak, hanya garis tipis sebagai pembatas */}
+        <div className="divide-y divide-stone-200/90 border-y border-stone-200/90 bg-transparent">
           {[
+            {
+              id: 'pelayananqu',
+              name: 'PelayananQu',
+              tagline: '6 Sub-Kategori Usaha Layanan Jasa Akar Rumput',
+              badge: 'Baru • JasaQu',
+              icon: Scissors,
+              bg: 'bg-orange-600',
+              textBadge: 'bg-orange-50 text-orange-800 border-orange-300',
+              onClick: onSwitchToPelayananQu,
+            },
+            {
+              id: 'transportasiqu',
+              name: 'TransportasiQu',
+              tagline: '6 Sub-Kategori Jasa Angkutan & Logistik Akar Rumput',
+              badge: 'Logistik',
+              icon: Truck,
+              bg: 'bg-teal-700',
+              textBadge: 'bg-teal-50 text-teal-800 border-teal-300',
+              onClick: onSwitchToTransportasiQu,
+            },
+            {
+              id: 'kulinerqu',
+              name: 'KulinerQu',
+              tagline: 'POS Kuliner: Kios, Mangkal & Keliling',
+              badge: 'Offline POS',
+              icon: Flame,
+              bg: 'bg-amber-500',
+              textBadge: 'bg-amber-100 text-amber-900 border-amber-300',
+              onClick: onSwitchToKulinerQu,
+            },
             {
               id: 'baksoqu',
               name: 'BaksoQu',
+              tagline: 'POS Restoran, Denah Meja & Dapur',
+              badge: 'Resto POS',
               icon: Store,
-              bg: 'bg-amber-500',
+              bg: 'bg-red-600',
+              textBadge: 'bg-red-50 text-red-700 border-red-200',
               onClick: onSwitchToBaksoQu,
             },
             {
               id: 'bengkelqu',
               name: 'BengkelQu',
+              tagline: 'Sistem Kasir & Servis Bengkel Warga',
+              badge: 'Otomotif',
               icon: Wrench,
               bg: 'bg-emerald-600',
+              textBadge: 'bg-emerald-50 text-emerald-700 border-emerald-200',
               onClick: onSwitchToBengkelQu,
             },
             {
               id: 'klinikqu',
               name: 'KlinikQu',
+              tagline: 'Faskes, Rekam Medis & Apotek Warga',
+              badge: 'Kesehatan',
               icon: Activity,
               bg: 'bg-teal-600',
+              textBadge: 'bg-teal-50 text-teal-700 border-teal-200',
               onClick: onSwitchToKlinikQu,
             },
             {
               id: 'ritelqu',
               name: 'RitelQu',
+              tagline: '7 Sub-Kategori Dagangan Eceran Akar Rumput',
+              badge: '7 Kategori Eceran',
               icon: ShoppingBag,
-              bg: 'bg-blue-600',
+              bg: 'bg-emerald-600',
+              textBadge: 'bg-emerald-50 text-emerald-800 border-emerald-300',
               onClick: onSwitchToRitelQu,
             },
           ].map((item) => {
@@ -155,23 +215,67 @@ export const UsahaQuView: React.FC<UsahaQuViewProps> = ({
                 key={item.id}
                 type="button"
                 onClick={item.onClick}
-                className="w-full px-4 py-3 flex items-center justify-between hover:bg-white active:bg-stone-100 transition-colors cursor-pointer group text-left"
+                className="w-full px-2 py-3.5 flex items-center justify-between hover:bg-stone-50 active:bg-stone-100 transition-colors cursor-pointer group text-left"
               >
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-3.5 min-w-0">
                   <div
-                    className={`w-10 h-10 rounded-xl ${item.bg} text-white flex items-center justify-center shrink-0 shadow-2xs group-hover:scale-105 transition-transform`}
+                    className={`w-11 h-11 rounded-xl ${item.bg} text-white flex items-center justify-center shrink-0 shadow-2xs group-hover:scale-105 transition-transform`}
                   >
-                    <Icon className="w-5 h-5" />
+                    <Icon className="w-5.5 h-5.5" />
                   </div>
-                  <span className="font-bold text-base text-stone-900 group-hover:text-emerald-800 transition-colors">
-                    {item.name}
-                  </span>
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-2">
+                      <span className="font-black text-lg text-stone-900 group-hover:text-emerald-800 transition-colors">
+                        {item.name}
+                      </span>
+                      {item.badge && (
+                        <span className={`text-[10px] font-black px-2 py-0.5 rounded-full border ${item.textBadge}`}>
+                          {item.badge}
+                        </span>
+                      )}
+                    </div>
+                    <p className="text-xs font-semibold text-stone-500 truncate mt-0.5">
+                      {item.tagline}
+                    </p>
+                  </div>
                 </div>
-                <ChevronRight className="w-4 h-4 text-stone-400 group-hover:text-stone-700 transition-colors" />
+                <ChevronRight className="w-5 h-5 text-stone-400 group-hover:text-stone-700 shrink-0 ml-2 transition-transform group-hover:translate-x-0.5" />
               </button>
             );
           })}
         </div>
+
+        {/* Highlight Banner Khusus: PelayananQu */}
+        {onSwitchToPelayananQu && (
+          <div className="pt-2">
+            <div className="p-3 bg-gradient-to-r from-orange-600 via-amber-600 to-orange-700 rounded-2xl text-white shadow-xs flex items-center justify-between gap-3">
+              <div className="flex items-center gap-2.5 min-w-0">
+                <div className="w-9 h-9 rounded-xl bg-white/20 backdrop-blur-xs flex items-center justify-center shrink-0">
+                  <Scissors className="w-5 h-5 text-white" />
+                </div>
+                <div className="min-w-0">
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    <span className="text-[9px] font-black uppercase tracking-wider bg-black/25 px-2 py-0.5 rounded-md text-amber-200">
+                      UNIT JASA BARU
+                    </span>
+                    <span className="text-xs font-black truncate">PelayananQu (JasaQu)</span>
+                  </div>
+                  <p className="text-[11px] text-orange-100 font-medium truncate mt-0.5">
+                    Servis, Barbershop, Laundry, Penjahit, Rental & Tukang
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={onSwitchToPelayananQu}
+                className="px-3 py-1.5 bg-white hover:bg-orange-50 text-orange-900 rounded-xl text-xs font-black flex items-center gap-1 shadow-sm shrink-0 active:scale-95 transition-all cursor-pointer"
+              >
+                <span>Buka</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </button>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Categories and Actions */}
@@ -179,12 +283,12 @@ export const UsahaQuView: React.FC<UsahaQuViewProps> = ({
         <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar text-xs">
           {[
             { id: 'all', label: 'Semua Lapak' },
+            { id: 'jasa', label: 'PelayananQu (Jasa & Servis)' },
+            { id: 'kuliner', label: 'Kuliner & Warung' },
             { id: 'kesehatan', label: 'Kesehatan & Klinik' },
             { id: 'otomotif', label: 'Otomotif & Bengkel' },
-            { id: 'kuliner', label: 'Kuliner' },
-            { id: 'sembako', label: 'Sembako' },
-            { id: 'laundry', label: 'Laundry' },
-            { id: 'jasa', label: 'Jasa & Servis' },
+            { id: 'sembako', label: 'Sembako & Ritel' },
+            { id: 'laundry', label: 'Laundry & Cuci' },
           ].map((cat) => (
             <button
               key={cat.id}
@@ -298,13 +402,19 @@ export const UsahaQuView: React.FC<UsahaQuViewProps> = ({
           /* List View: Hanya Logo/Ikon dan Nama */
           <div className="divide-y divide-stone-100 bg-white rounded-2xl border border-stone-200/80 overflow-hidden shadow-2xs">
             {filteredBusinesses.map((biz) => {
+              const isPelayananQu = biz.posModuleKey === 'pelayananqu' || biz.category === 'jasa' || biz.category === 'laundry';
+              const isTransportasiQu = biz.posModuleKey === 'transportasiqu';
+              const isKulinerQu = biz.posModuleKey === 'kulinerqu';
               const isBaksoQu = biz.posModuleKey === 'baksoqu';
               const isBengkelQu = biz.posModuleKey === 'bengkelqu';
               const isKlinikQu = biz.posModuleKey === 'klinikqu';
               const isRitelQu = biz.posModuleKey === 'ritelqu';
 
               const handleClick = () => {
-                if (isBaksoQu) onSwitchToBaksoQu();
+                if (isPelayananQu && onSwitchToPelayananQu) onSwitchToPelayananQu();
+                else if (isTransportasiQu && onSwitchToTransportasiQu) onSwitchToTransportasiQu();
+                else if (isKulinerQu && onSwitchToKulinerQu) onSwitchToKulinerQu();
+                else if (isBaksoQu) onSwitchToBaksoQu();
                 else if (isBengkelQu) onSwitchToBengkelQu();
                 else if (isKlinikQu) onSwitchToKlinikQu();
                 else if (isRitelQu) onSwitchToRitelQu();
@@ -318,11 +428,17 @@ export const UsahaQuView: React.FC<UsahaQuViewProps> = ({
                   onClick={handleClick}
                   className="w-full px-4 py-3 flex items-center justify-between hover:bg-stone-50 active:bg-stone-100 transition-colors cursor-pointer group text-left"
                 >
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-3 min-w-0">
                     <div
                       className={`w-10 h-10 rounded-xl flex items-center justify-center font-bold text-base shrink-0 shadow-2xs group-hover:scale-105 transition-transform ${
-                        isBaksoQu
+                        isPelayananQu
+                          ? 'bg-orange-600 text-white'
+                          : isTransportasiQu
+                          ? 'bg-teal-700 text-white'
+                          : isKulinerQu
                           ? 'bg-amber-500 text-white'
+                          : isBaksoQu
+                          ? 'bg-red-600 text-white'
                           : isBengkelQu
                           ? 'bg-emerald-600 text-white'
                           : isKlinikQu
@@ -332,23 +448,41 @@ export const UsahaQuView: React.FC<UsahaQuViewProps> = ({
                           : 'bg-emerald-700 text-white'
                       }`}
                     >
-                      {isBaksoQu ? (
-                        <Store className="w-5 h-5" />
+                      {isPelayananQu ? (
+                        <Scissors className="w-5 h-5 text-white" />
+                      ) : isTransportasiQu ? (
+                        <Truck className="w-5 h-5 text-white" />
+                      ) : isKulinerQu ? (
+                        <Flame className="w-5 h-5 text-white" />
+                      ) : isBaksoQu ? (
+                        <Store className="w-5 h-5 text-white" />
                       ) : isBengkelQu ? (
-                        <Wrench className="w-5 h-5" />
+                        <Wrench className="w-5 h-5 text-white" />
                       ) : isKlinikQu ? (
-                        <Activity className="w-5 h-5" />
+                        <Activity className="w-5 h-5 text-white" />
                       ) : isRitelQu ? (
-                        <ShoppingBag className="w-5 h-5" />
+                        <ShoppingBag className="w-5 h-5 text-white" />
                       ) : (
                         biz.name.charAt(0).toUpperCase()
                       )}
                     </div>
-                    <span className="font-bold text-base text-stone-900 group-hover:text-emerald-800 transition-colors">
-                      {biz.name}
-                    </span>
+                    <div className="min-w-0">
+                      <div className="flex items-center gap-2">
+                        <span className="font-bold text-base text-stone-900 group-hover:text-emerald-800 transition-colors truncate">
+                          {biz.name}
+                        </span>
+                        {isPelayananQu && (
+                          <span className="text-[10px] font-black px-1.5 py-0.5 rounded bg-orange-100 text-orange-800 border border-orange-200 shrink-0">
+                            PelayananQu
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-[11px] text-stone-400 truncate mt-0.5">
+                        {biz.ownerName} · {biz.blockNumber}
+                      </p>
+                    </div>
                   </div>
-                  <ChevronRight className="w-4 h-4 text-stone-400 group-hover:text-stone-700 transition-colors" />
+                  <ChevronRight className="w-4 h-4 text-stone-400 group-hover:text-stone-700 transition-colors ml-2 shrink-0" />
                 </button>
               );
             })}
@@ -356,6 +490,9 @@ export const UsahaQuView: React.FC<UsahaQuViewProps> = ({
         ) : (
           /* Katalog View: Detail Card */
           filteredBusinesses.map((biz) => {
+            const isPelayananQu = biz.posModuleKey === 'pelayananqu' || biz.category === 'jasa' || biz.category === 'laundry';
+            const isTransportasiQu = biz.posModuleKey === 'transportasiqu';
+            const isKulinerQu = biz.posModuleKey === 'kulinerqu';
             const isBaksoQu = biz.posModuleKey === 'baksoqu';
             const isBengkelQu = biz.posModuleKey === 'bengkelqu';
             const isKlinikQu = biz.posModuleKey === 'klinikqu';
@@ -365,8 +502,14 @@ export const UsahaQuView: React.FC<UsahaQuViewProps> = ({
               <div
                 key={biz.id}
                 className={`bg-white rounded-2xl border p-4 shadow-2xs transition-all space-y-3 ${
-                  isBaksoQu
-                    ? 'border-amber-300 ring-1 ring-amber-300/40'
+                  isPelayananQu
+                    ? 'border-orange-400 ring-1 ring-orange-300/50'
+                    : isTransportasiQu
+                    ? 'border-teal-400 ring-1 ring-teal-300/50'
+                    : isKulinerQu
+                    ? 'border-amber-400 ring-1 ring-amber-300/50'
+                    : isBaksoQu
+                    ? 'border-red-300 ring-1 ring-red-300/40'
                     : isBengkelQu
                     ? 'border-emerald-400 ring-1 ring-emerald-300/50'
                     : isKlinikQu
@@ -380,7 +523,13 @@ export const UsahaQuView: React.FC<UsahaQuViewProps> = ({
                   <div className="flex items-center gap-3">
                     <div
                       className={`w-12 h-12 rounded-2xl flex items-center justify-center font-bold text-base shrink-0 ${
-                        isBaksoQu
+                        isPelayananQu
+                          ? 'bg-gradient-to-br from-orange-600 to-amber-600 text-white shadow'
+                          : isTransportasiQu
+                          ? 'bg-teal-700 text-white shadow'
+                          : isKulinerQu
+                          ? 'bg-amber-500 text-white shadow'
+                          : isBaksoQu
                           ? 'bg-gradient-to-br from-amber-500 to-red-600 text-white shadow'
                           : isBengkelQu
                           ? 'bg-emerald-800 text-amber-300 shadow'
@@ -391,25 +540,37 @@ export const UsahaQuView: React.FC<UsahaQuViewProps> = ({
                           : 'bg-emerald-100 text-emerald-800'
                       }`}
                     >
-                      {isBaksoQu ? (
+                      {isPelayananQu ? (
+                        <Scissors className="w-6 h-6 text-white" />
+                      ) : isTransportasiQu ? (
+                        <Truck className="w-6 h-6 text-white" />
+                      ) : isKulinerQu ? (
+                        <Flame className="w-6 h-6 text-white" />
+                      ) : isBaksoQu ? (
                         'BQ'
                       ) : isBengkelQu ? (
-                        <Wrench className="w-6 h-6" />
+                        <Wrench className="w-6 h-6 text-white" />
                       ) : isKlinikQu ? (
-                        <Activity className="w-6 h-6" />
+                        <Activity className="w-6 h-6 text-white" />
                       ) : isRitelQu ? (
-                        <ShoppingBag className="w-6 h-6" />
+                        <ShoppingBag className="w-6 h-6 text-white" />
                       ) : (
                         biz.name.charAt(0)
                       )}
                     </div>
                     <div>
-                      <div className="flex items-center gap-1.5">
+                      <div className="flex items-center gap-1.5 flex-wrap">
                         <h3 className="text-xs font-bold text-stone-900 leading-snug">{biz.name}</h3>
                         {biz.badge && (
                           <span
                             className={`text-[9px] font-bold px-1.5 py-0.2 rounded ${
-                              isBengkelQu
+                              isPelayananQu
+                                ? 'bg-orange-100 text-orange-800'
+                                : isTransportasiQu
+                                ? 'bg-teal-100 text-teal-800'
+                                : isKulinerQu
+                                ? 'bg-amber-100 text-amber-800'
+                                : isBengkelQu
                                 ? 'bg-emerald-100 text-emerald-800'
                                 : isKlinikQu
                                 ? 'bg-teal-100 text-teal-800'
@@ -481,17 +642,49 @@ export const UsahaQuView: React.FC<UsahaQuViewProps> = ({
                     )}
                   </div>
 
-                  {isBaksoQu ? (
+                  {isPelayananQu && onSwitchToPelayananQu ? (
                     <button
-                      onClick={onSwitchToBaksoQu}
+                      type="button"
+                      onClick={onSwitchToPelayananQu}
+                      className="px-3.5 py-1.5 bg-orange-600 hover:bg-orange-500 text-white rounded-xl text-xs font-black flex items-center gap-1.5 shadow-sm active:scale-95 transition-all cursor-pointer"
+                    >
+                      <Scissors className="w-3.5 h-3.5 text-white" />
+                      <span>Buka PelayananQu</span>
+                      <ArrowRight className="w-3.5 h-3.5" />
+                    </button>
+                  ) : isTransportasiQu && onSwitchToTransportasiQu ? (
+                    <button
+                      type="button"
+                      onClick={onSwitchToTransportasiQu}
+                      className="px-3.5 py-1.5 bg-teal-700 hover:bg-teal-600 text-white rounded-xl text-xs font-black flex items-center gap-1.5 shadow-sm active:scale-95 transition-all cursor-pointer"
+                    >
+                      <Truck className="w-3.5 h-3.5 text-white" />
+                      <span>Buka TransportasiQu</span>
+                      <ArrowRight className="w-3.5 h-3.5" />
+                    </button>
+                  ) : isKulinerQu && onSwitchToKulinerQu ? (
+                    <button
+                      type="button"
+                      onClick={onSwitchToKulinerQu}
                       className="px-3.5 py-1.5 bg-amber-500 hover:bg-amber-400 text-stone-950 rounded-xl text-xs font-black flex items-center gap-1.5 shadow-sm active:scale-95 transition-all cursor-pointer"
                     >
-                      <Store className="w-3.5 h-3.5" />
+                      <Flame className="w-3.5 h-3.5" />
+                      <span>Buka KulinerQu</span>
+                      <ArrowRight className="w-3.5 h-3.5" />
+                    </button>
+                  ) : isBaksoQu ? (
+                    <button
+                      type="button"
+                      onClick={onSwitchToBaksoQu}
+                      className="px-3.5 py-1.5 bg-red-600 hover:bg-red-500 text-white rounded-xl text-xs font-black flex items-center gap-1.5 shadow-sm active:scale-95 transition-all cursor-pointer"
+                    >
+                      <Store className="w-3.5 h-3.5 text-white" />
                       <span>Masuk Kasir POS</span>
                       <ArrowRight className="w-3.5 h-3.5" />
                     </button>
                   ) : isBengkelQu ? (
                     <button
+                      type="button"
                       onClick={onSwitchToBengkelQu}
                       className="px-3.5 py-1.5 bg-emerald-800 hover:bg-emerald-700 text-white rounded-xl text-xs font-black flex items-center gap-1.5 shadow-sm active:scale-95 transition-all cursor-pointer"
                     >
@@ -501,6 +694,7 @@ export const UsahaQuView: React.FC<UsahaQuViewProps> = ({
                     </button>
                   ) : isKlinikQu ? (
                     <button
+                      type="button"
                       onClick={onSwitchToKlinikQu}
                       className="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-black flex items-center gap-1.5 shadow-sm active:scale-95 transition-all cursor-pointer"
                     >
@@ -510,6 +704,7 @@ export const UsahaQuView: React.FC<UsahaQuViewProps> = ({
                     </button>
                   ) : isRitelQu ? (
                     <button
+                      type="button"
                       onClick={onSwitchToRitelQu}
                       className="px-3.5 py-1.5 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-xs font-black flex items-center gap-1.5 shadow-sm active:scale-95 transition-all cursor-pointer"
                     >
@@ -519,6 +714,7 @@ export const UsahaQuView: React.FC<UsahaQuViewProps> = ({
                     </button>
                   ) : (
                     <button
+                      type="button"
                       onClick={() =>
                         showNotification(`Pemesanan langsung terhubung ke WhatsApp ${biz.ownerName}.`)
                       }

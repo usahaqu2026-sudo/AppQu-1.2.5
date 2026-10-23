@@ -651,8 +651,68 @@ export const SEED_LETTERS: SuratPengantar[] = [
   },
 ];
 
-// Seed UsahaQu (Local Businesses) with BaksoQu Master POS integrated
+// Seed UsahaQu (Local Businesses) with POS modules integrated
 export const SEED_BUSINESSES: LocalBusiness[] = [
+  {
+    id: 'biz-pelayananqu',
+    name: 'PelayananQu (6 Sub-Kategori Layanan Jasa Warga)',
+    category: 'jasa',
+    ownerName: 'Bang Dani & Komunitas Jasa Warga RT 04',
+    blockNumber: 'Sentra Servis & Jasa Blok D2 No. 03',
+    phone: '0812-9988-7711',
+    description: 'Pusat kasir & manajemen 6 Sub-Kategori Usaha Layanan Akar Rumput: Servis & Bengkel, Barbershop & Salon, Laundry & Cuci, Penjahit & Permak, Rental & Sewa, serta Jasa Panggilan & Tukang AC. Dilengkapi cetak struk nota thermal 58mm & integrasi WhatsApp.',
+    rating: 4.97,
+    isPosActive: true,
+    posModuleKey: 'pelayananqu',
+    badge: 'Unit Usaha JasaQu',
+    imageUrl: 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=500',
+    products: [
+      { id: 'pj-1', name: 'Servis Ringan / Elektronik', price: 45000, unit: 'layanan', description: 'Pemeriksaan & perbaikan unit elektronik' },
+      { id: 'pj-2', name: 'Paket Cukur Dewasa + Styling', price: 20000, unit: 'orang', description: 'Potong rapi, cuci rambut & pomade' },
+      { id: 'pj-3', name: 'Cuci Komplit Kiloan (Reguler/Express)', price: 7000, unit: 'kg', description: 'Bersih wangi higienis 1-2 hari selesai' },
+      { id: 'pj-4', name: 'Permak & Jahit Pakaian Warga', price: 15000, unit: 'pcs', description: 'Potong celana, ganti resleting & kancing' },
+      { id: 'pj-5', name: 'Rental Alat / Terop / Genset', price: 100000, unit: 'hari', description: 'Sewa perlengkapan hajatan warga' },
+      { id: 'pj-6', name: 'Jasa Tukang & Cuci AC Rumah', price: 65000, unit: 'unit', description: 'Pembersihan filter, evaporator & cek freon' },
+    ],
+  },
+  {
+    id: 'biz-kulinerqu',
+    name: 'KulinerQu (Kios, Mangkal & Keliling)',
+    category: 'kuliner',
+    ownerName: 'Pakde Warno & Paguyuban Gerobak',
+    blockNumber: 'Sentra Kuliner Blok C No. 08',
+    phone: '0812-3344-5566',
+    description: 'Sistem POS Kasir Cepat Kuliner: Kios/Ruko (Hold Order Meja), Mangkal/Gerobak (Preset Porsi & Uang Pas), dan Keliling/Asongan (Simulasi Suara & Sisa Porsi).',
+    rating: 4.92,
+    isPosActive: true,
+    posModuleKey: 'kulinerqu',
+    badge: 'POS Kuliner Offline',
+    imageUrl: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=500',
+    products: [
+      { id: 'pk-1', name: 'Paket Porsi Biasa', price: 15000, unit: 'porsi', description: 'Porsi standar komplit' },
+      { id: 'pk-2', name: 'Paket Porsi Jumbo + Telur', price: 22000, unit: 'porsi', description: 'Porsi ekstra kenyang' },
+      { id: 'pk-3', name: 'Es Teh Manis Segar', price: 5000, unit: 'gelas', description: 'Teh melati seduh dingin' },
+    ],
+  },
+  {
+    id: 'biz-transportasiqu',
+    name: 'TransportasiQu (Angkutan, Kurir & Carter)',
+    category: 'jasa',
+    ownerName: 'Bang Joko & Paguyuban Driver RT 04',
+    blockNumber: 'Pangkalan Pos Blok B',
+    phone: '0813-7788-9900',
+    description: 'Manajemen 6 Sub-Kategori Transportasi & Logistik: Ojek & Penumpang, Angkot & Bus Kota, Angkut Barang & Kurir, Travel & Carter, Towing & Storing, serta Jastip Belanja.',
+    rating: 4.94,
+    isPosActive: true,
+    posModuleKey: 'transportasiqu',
+    badge: 'Logistik & Angkutan',
+    imageUrl: 'https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?w=500',
+    products: [
+      { id: 'pt-1', name: 'Tarif Ojek Zona 1 (< 3 KM)', price: 10000, unit: 'trip', description: 'Antar jemput warga dalam lingkungan' },
+      { id: 'pt-2', name: 'Angkut Barang Pickup / Rit', price: 85000, unit: 'rit', description: 'Sewa mobil pickup pindahan/belanja' },
+      { id: 'pt-3', name: 'Jasa Kuli Angkut / Bongkar', price: 35000, unit: 'orang', description: 'Bantuan tenaga angkat barang' },
+    ],
+  },
   {
     id: 'biz-baksoqu',
     name: 'Bakso Qu 1.0 (Unit Usaha Unggulan)',
@@ -735,13 +795,16 @@ export const SEED_BUSINESSES: LocalBusiness[] = [
   },
   {
     id: 'biz-laundry',
-    name: 'Berkah Express Laundry & Dry Clean',
+    name: 'Berkah Express Laundry & Dry Clean (PelayananQu)',
     category: 'laundry',
     ownerName: 'Mbak Dewi (Warga Blok B2)',
     blockNumber: 'Blok B2 No. 11',
     phone: '0858-7711-2299',
-    description: 'Jasa cuci kiloan harum higienis 1 hari selesai, cuci selimut/bedcover, setrika uap rapi tanpa kusut. Menggunakan deterjen ramah lingkungan.',
-    rating: 4.7,
+    description: 'Jasa cuci kiloan harum higienis 1 hari selesai, cuci selimut/bedcover, setrika uap rapi tanpa kusut. Sub-kategori Laundry PelayananQu.',
+    rating: 4.85,
+    isPosActive: true,
+    posModuleKey: 'pelayananqu',
+    badge: 'PelayananQu Laundry',
     imageUrl: 'https://images.unsplash.com/photo-1545173168-9f1947eebb7f?w=500',
     products: [
       { id: 'p-7', name: 'Cuci Setrika Reguler 2 Hari', price: 7000, unit: 'kg', description: 'Pakaian wangi rapi terbungkus plastik sealer' },
@@ -751,13 +814,16 @@ export const SEED_BUSINESSES: LocalBusiness[] = [
   },
   {
     id: 'biz-service',
-    name: 'Jaya Teknik Service AC & Kulkas',
+    name: 'Jaya Teknik Service AC & Kulkas (PelayananQu)',
     category: 'jasa',
     ownerName: 'Pak Joko Prabowo (Warga Blok D2)',
     blockNumber: 'Blok D2 No. 09',
     phone: '0852-4455-6677',
-    description: 'Servis panggilan spesialis pendingin rumah tangga: cuci AC split, tambah freon R32/R410, perbaikan modul inverter, dan servis kulkas 2 pintu bergaransi 30 hari.',
-    rating: 4.9,
+    description: 'Servis panggilan spesialis pendingin rumah tangga: cuci AC split, tambah freon R32/R410, perbaikan modul inverter, dan servis kulkas. Sub-kategori Servis PelayananQu.',
+    rating: 4.95,
+    isPosActive: true,
+    posModuleKey: 'pelayananqu',
+    badge: 'PelayananQu Servis',
     imageUrl: 'https://images.unsplash.com/photo-1621905251189-08b45d6a269e?w=500',
     products: [
       { id: 'p-10', name: 'Cuci AC Split Standar 0.5 - 1 PK', price: 65000, unit: 'unit', description: 'Cuci evaporator indoor, pembersihan outdoor, dan cek tekanan' },
@@ -1025,7 +1091,17 @@ export const AppQuStorageService = {
       return SEED_BUSINESSES;
     }
     try {
-      return JSON.parse(raw);
+      const stored: LocalBusiness[] = JSON.parse(raw);
+      // Ensure seed businesses like PelayananQu, KulinerQu, TransportasiQu exist
+      const missing = SEED_BUSINESSES.filter(
+        (seed) => !stored.some((b) => b.id === seed.id || (seed.posModuleKey && b.posModuleKey === seed.posModuleKey))
+      );
+      if (missing.length > 0) {
+        const merged = [...missing, ...stored];
+        this.saveBusinesses(merged);
+        return merged;
+      }
+      return stored;
     } catch {
       return SEED_BUSINESSES;
     }

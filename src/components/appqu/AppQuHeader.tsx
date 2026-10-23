@@ -80,7 +80,7 @@ export const AppQuHeader: React.FC<AppQuHeaderProps> = ({
     <header
       className="sticky top-0 z-30 bg-emerald-950 text-stone-100 border-b border-emerald-900/70 px-3 pb-2.5 flex items-center justify-between shrink-0 select-none shadow-md transition-all"
       style={{
-        paddingTop: 'calc(env(safe-area-inset-top, 0px) + 0.625rem)',
+        paddingTop: 'calc(max(env(safe-area-inset-top, 0px), 1.85rem) + 0.35rem)',
       }}
     >
       {/* Left: Branding & Module Label */}

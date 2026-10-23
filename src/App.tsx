@@ -29,6 +29,9 @@ import { ChatQuView } from './components/appqu/ChatQuView';
 import { BengkelQuView } from './components/bengkel/BengkelQuView';
 import { KlinikQuView } from './components/klinik/KlinikQuView';
 import { RitelQuView } from './components/ritel/RitelQuView';
+import { KulinerQuView } from './components/kuliner/KulinerQuView';
+import { TransportasiQuView } from './components/transportasi/TransportasiQuView';
+import { PelayananQuView } from './components/pelayanan/PelayananQuView';
 
 import {
   TableItem,
@@ -63,9 +66,11 @@ import { Sparkles } from 'lucide-react';
 
 export default function App() {
   // ====================================================
-  // MASTER APPLICATION MODE: 'appqu' | 'baksoqu' | 'bengkelqu' | 'klinikqu' | 'ritelqu'
+  // MASTER APPLICATION MODE: 'appqu' | 'baksoqu' | 'bengkelqu' | 'klinikqu' | 'ritelqu' | 'kulinerqu' | 'transportasiqu' | 'pelayananqu'
   // ====================================================
-  const [appMode, setAppMode] = useState<'appqu' | 'baksoqu' | 'bengkelqu' | 'klinikqu' | 'ritelqu'>('appqu');
+  const [appMode, setAppMode] = useState<
+    'appqu' | 'baksoqu' | 'bengkelqu' | 'klinikqu' | 'ritelqu' | 'kulinerqu' | 'transportasiqu' | 'pelayananqu'
+  >('appqu');
 
   // AppQu Active Module (With AreaQu, ChatQu, and Setting)
   const [activeAppQuModule, setActiveAppQuModule] = useState<
@@ -281,6 +286,24 @@ export default function App() {
   const handleSwitchToRitelQu = () => {
     setAppMode('ritelqu');
     showNotification('Beralih ke RitelQu: Kasir & Toko Kelontong Warga RT 04');
+  };
+
+  // Switch to KulinerQu Offline POS Workstation
+  const handleSwitchToKulinerQu = () => {
+    setAppMode('kulinerqu');
+    showNotification('Beralih ke KulinerQu: POS Kuliner Offline (Kios, Mangkal & Keliling)');
+  };
+
+  // Switch to TransportasiQu 6 Sub-Kategori Angkutan & Logistik
+  const handleSwitchToTransportasiQu = () => {
+    setAppMode('transportasiqu');
+    showNotification('Beralih ke TransportasiQu: 6 Sub-Kategori Jasa Angkutan & Logistik');
+  };
+
+  // Switch to PelayananQu 6 Sub-Kategori Layanan & Jasa Akar Rumput
+  const handleSwitchToPelayananQu = () => {
+    setAppMode('pelayananqu');
+    showNotification('Beralih ke PelayananQu: 6 Sub-Kategori Jasa & Layanan Warga');
   };
 
   // Return to AppQu Ecosystem
@@ -570,7 +593,13 @@ export default function App() {
           ? 'BengkelQu'
           : appMode === 'klinikqu'
           ? 'KlinikQu'
-          : 'RitelQu'
+          : appMode === 'ritelqu'
+          ? 'RitelQu'
+          : appMode === 'kulinerqu'
+          ? 'KulinerQu'
+          : appMode === 'transportasiqu'
+          ? 'TransportasiQu'
+          : 'PelayananQu'
       }
     >
       {/* Toast Notification Banner */}
@@ -659,15 +688,28 @@ export default function App() {
             )}
 
             {activeAppQuModule === 'warga' && (
-              <WargaView
-                currentUser={currentUser}
-                residents={residents}
-                onUpdateResidents={(newR) => {
-                  setResidents(newR);
-                  AppQuStorageService.saveResidents(newR);
-                }}
-                showNotification={showNotification}
-              />
+              <div className="flex flex-col flex-1 overflow-hidden">
+                <div className="bg-stone-900 border-b border-stone-800 px-3.5 py-2 flex items-center justify-between shrink-0">
+                  <button
+                    onClick={() => setActiveAppQuModule('setting')}
+                    className="flex items-center gap-1.5 text-xs text-emerald-400 hover:text-emerald-300 font-bold cursor-pointer"
+                  >
+                    ← Kembali ke Opsi / Pengaturan
+                  </button>
+                  <span className="text-[11px] text-stone-400">Buku Induk WargaQu</span>
+                </div>
+                <div className="flex-1 overflow-y-auto">
+                  <WargaView
+                    currentUser={currentUser}
+                    residents={residents}
+                    onUpdateResidents={(newR) => {
+                      setResidents(newR);
+                      AppQuStorageService.saveResidents(newR);
+                    }}
+                    showNotification={showNotification}
+                  />
+                </div>
+              </div>
             )}
 
             {activeAppQuModule === 'usaha' && (
@@ -678,6 +720,9 @@ export default function App() {
                 onSwitchToBengkelQu={handleSwitchToBengkelQu}
                 onSwitchToKlinikQu={handleSwitchToKlinikQu}
                 onSwitchToRitelQu={handleSwitchToRitelQu}
+                onSwitchToKulinerQu={handleSwitchToKulinerQu}
+                onSwitchToTransportasiQu={handleSwitchToTransportasiQu}
+                onSwitchToPelayananQu={handleSwitchToPelayananQu}
                 onOpenAreaQu={() => setActiveAppQuModule('area')}
                 onOpenChat={(threadId) => {
                   setSelectedChatThreadId(threadId || null);
@@ -769,10 +814,37 @@ export default function App() {
                   StorageService.saveMenu(newMenu);
                   showNotification('Daftar menu berhasil diperbarui.');
                 }}
+                currentUser={currentUser}
+                residents={residents}
+                onUpdateResidents={(newR) => {
+                  setResidents(newR);
+                  AppQuStorageService.saveResidents(newR);
+                }}
+                onOpenRoleModal={() => setIsRoleModalOpen(true)}
+                onOpenHierarchy={() => setIsHierarchyModalOpen(true)}
+                witnessCount={currentUser.witnessCount}
+                onNavigateToModule={(mod) => setActiveAppQuModule(mod as any)}
+                showNotification={showNotification}
+                initialSubTab="komunitas"
               />
             )}
 
-            {activeAppQuModule === 'arsitektur' && <ArsitekturView />}
+            {activeAppQuModule === 'arsitektur' && (
+              <div className="flex flex-col flex-1 overflow-hidden">
+                <div className="bg-stone-900 border-b border-stone-800 px-3.5 py-2 flex items-center justify-between shrink-0">
+                  <button
+                    onClick={() => setActiveAppQuModule('setting')}
+                    className="flex items-center gap-1.5 text-xs text-emerald-400 hover:text-emerald-300 font-bold cursor-pointer"
+                  >
+                    ← Kembali ke Opsi / Pengaturan
+                  </button>
+                  <span className="text-[11px] text-stone-400">Skema & Arsitektur</span>
+                </div>
+                <div className="flex-1 overflow-y-auto">
+                  <ArsitekturView />
+                </div>
+              </div>
+            )}
           </main>
 
           {/* AppQu Bottom Navigation Bar (Static at bottom, No Duplication) */}
@@ -815,6 +887,9 @@ export default function App() {
             onSwitchToBengkelQu={handleSwitchToBengkelQu}
             onSwitchToKlinikQu={handleSwitchToKlinikQu}
             onSwitchToRitelQu={handleSwitchToRitelQu}
+            onSwitchToKulinerQu={handleSwitchToKulinerQu}
+            onSwitchToTransportasiQu={handleSwitchToTransportasiQu}
+            onSwitchToPelayananQu={handleSwitchToPelayananQu}
             onOpenArsitektur={() => setActiveAppQuModule('arsitektur')}
           />
         </div>
@@ -902,6 +977,17 @@ export default function App() {
                   StorageService.saveMenu(newMenu);
                   showNotification('Daftar menu berhasil diperbarui.');
                 }}
+                currentUser={currentUser}
+                residents={residents}
+                onUpdateResidents={(newR) => {
+                  setResidents(newR);
+                  AppQuStorageService.saveResidents(newR);
+                }}
+                onOpenRoleModal={() => setIsRoleModalOpen(true)}
+                onOpenHierarchy={() => setIsHierarchyModalOpen(true)}
+                witnessCount={currentUser.witnessCount}
+                showNotification={showNotification}
+                initialSubTab="toko"
               />
             )}
           </main>
@@ -1038,6 +1124,39 @@ export default function App() {
       {/* ========================================================= */}
       {appMode === 'ritelqu' && (
         <RitelQuView
+          currentUser={currentUser}
+          onBackToAppQu={handleReturnToAppQu}
+          showNotification={showNotification}
+        />
+      )}
+
+      {/* ========================================================= */}
+      {/* 6. KULINERQU POS KULINER (KIOS, MANGKAL & KELILING)       */}
+      {/* ========================================================= */}
+      {appMode === 'kulinerqu' && (
+        <KulinerQuView
+          currentUser={currentUser}
+          onBackToAppQu={handleReturnToAppQu}
+          showNotification={showNotification}
+        />
+      )}
+
+      {/* ========================================================= */}
+      {/* 7. TRANSPORTASIQU (6 SUB-KATEGORI ANGKUTAN & LOGISTIK)     */}
+      {/* ========================================================= */}
+      {appMode === 'transportasiqu' && (
+        <TransportasiQuView
+          currentUser={currentUser}
+          onBackToAppQu={handleReturnToAppQu}
+          showNotification={showNotification}
+        />
+      )}
+
+      {/* ========================================================= */}
+      {/* 8. PELAYANANQU (6 SUB-KATEGORI JASA & LAYANAN WARGA)       */}
+      {/* ========================================================= */}
+      {appMode === 'pelayananqu' && (
+        <PelayananQuView
           currentUser={currentUser}
           onBackToAppQu={handleReturnToAppQu}
           showNotification={showNotification}

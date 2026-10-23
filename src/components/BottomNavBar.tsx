@@ -22,10 +22,10 @@ export const BottomNavBar: React.FC<BottomNavBarProps> = ({
 
   return (
     <nav
-      className="w-full bg-stone-900/98 border-t border-stone-800 text-stone-400 px-2 pt-1.5 flex items-center justify-around shrink-0 z-30 shadow-lg select-none sticky bottom-0 transition-all"
+      className="w-full bg-stone-900/98 backdrop-blur-md border-t border-stone-800 text-stone-400 px-2 pt-1.5 flex items-center justify-around shrink-0 z-30 shadow-lg select-none sticky bottom-0 transition-all"
       style={{
-        paddingBottom: 'calc(env(safe-area-inset-bottom, 0px) + 0.5rem)',
-        minHeight: 'calc(3.75rem + env(safe-area-inset-bottom, 0px))',
+        paddingBottom: 'calc(max(env(safe-area-inset-bottom, 0px), 1.25rem) + 0.35rem)',
+        minHeight: 'calc(4rem + max(env(safe-area-inset-bottom, 0px), 1.25rem))',
       }}
     >
       {tabs.map((tab) => {
@@ -45,25 +45,32 @@ export const BottomNavBar: React.FC<BottomNavBarProps> = ({
               }
               onSelectTab(tab.id);
             }}
-            className={`relative flex items-center justify-center min-w-[56px] h-full py-1 px-2 rounded-xl transition-all duration-150 active:scale-95 cursor-pointer ${
+            className={`relative flex-1 flex flex-col items-center justify-center h-full py-1 px-1 rounded-2xl transition-all duration-150 active:scale-95 cursor-pointer ${
               isActive
-                ? 'text-amber-400 font-semibold bg-stone-800/60'
+                ? 'text-amber-400 font-bold bg-stone-800/80 shadow-xs'
                 : 'text-stone-400 hover:text-stone-200 hover:bg-stone-800/30'
             }`}
           >
             {/* Active Pill Accent */}
             {isActive && (
-              <span className="absolute -top-2 w-8 h-1 bg-amber-500 rounded-full"></span>
+              <span className="absolute -top-1 w-6 h-1 bg-amber-500 rounded-full" />
             )}
 
             <div className="relative flex items-center justify-center">
-              <Icon className={`w-6 h-6 transition-transform ${isActive ? 'scale-110' : ''}`} />
+              <Icon className={`w-6 h-6 transition-transform ${isActive ? 'scale-110 text-amber-400' : ''}`} />
               {tab.badge !== null && (
-                <span className="absolute -top-1.5 -right-2.5 bg-red-600 text-white text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center ring-1 ring-stone-900 animate-pulse">
+                <span className="absolute -top-1.5 -right-2 bg-red-600 text-white text-[9px] font-black w-4 h-4 rounded-full flex items-center justify-center ring-2 ring-stone-900 animate-pulse shadow-xs">
                   {tab.badge}
                 </span>
               )}
             </div>
+            <span
+              className={`text-[10px] font-extrabold uppercase tracking-tight mt-1 leading-none ${
+                isActive ? 'text-amber-400' : 'text-stone-400'
+              }`}
+            >
+              {tab.label}
+            </span>
           </button>
         );
       })}

@@ -362,7 +362,7 @@ export interface LocalBusiness {
   description: string;
   rating: number;
   isPosActive?: boolean;
-  posModuleKey?: 'baksoqu' | 'bengkelqu' | 'klinikqu' | 'ritelqu';
+  posModuleKey?: 'baksoqu' | 'bengkelqu' | 'klinikqu' | 'ritelqu' | 'kulinerqu' | 'transportasiqu' | 'pelayananqu';
   businessMode?: BusinessMode;
   osmTag?: string; // Tag auto-detect OSM (e.g. amenity=restaurant, shop=convenience)
   badge?: string;
@@ -551,11 +551,20 @@ export interface KlinikInvoice {
 // ==========================================
 // RITELQU: KASIR & TOKO KELONTONG WARGA
 // ==========================================
+export type RitelSubCategory =
+  | 'sembako'
+  | 'fashion'
+  | 'apotek'
+  | 'elektronik'
+  | 'furniture'
+  | 'plastik'
+  | 'atk';
+
 export interface RitelProduct {
   id: string;
   sku: string;
   name: string;
-  category: 'sembako' | 'minuman' | 'makanan' | 'kebersihan' | 'rokok_korek' | 'bumbu';
+  category: RitelSubCategory | string;
   price: number;
   buyPrice?: number;
   stock: number;
@@ -564,6 +573,15 @@ export interface RitelProduct {
   expiryDate?: string;
   promoType?: 'none' | 'percent' | 'nominal' | 'buy1get1' | 'wholesale';
   promoValue?: number;
+  // Sub-category specific attributes
+  sizeVariant?: string;
+  colorVariant?: string;
+  dosageInstruction?: string;
+  warrantyNote?: string;
+  qcPassed?: boolean;
+  packagingUnit?: 'pack' | 'ikat' | 'bal' | string;
+  sheetCount?: number;
+  finishingService?: string;
 }
 
 export interface RitelCustomer {
@@ -574,6 +592,7 @@ export interface RitelCustomer {
   points: number;
   totalDebt: number; // Catatan Bon Hutang
   notes?: string;
+  dueDate?: string; // Jatuh tempo piutang
 }
 
 export interface RitelCartItem {
@@ -582,8 +601,22 @@ export interface RitelCartItem {
   sku: string;
   name: string;
   price: number;
+  buyPrice?: number;
   qty: number;
   unit: string;
+  // Sub-category custom attributes for item
+  sizeVariant?: string;
+  colorVariant?: string;
+  dosageInstruction?: string;
+  warrantyNote?: string;
+  qcPassed?: boolean;
+  packagingUnit?: string;
+  isWholesale?: boolean;
+  sheetCount?: number;
+  finishingService?: string;
+  discountAmount?: number;
+  isReturned?: boolean;
+  note?: string;
 }
 
 export interface RitelInvoice {
@@ -592,14 +625,22 @@ export interface RitelInvoice {
   cashierName: string;
   customerName?: string;
   customerPhone?: string;
+  subCategory?: RitelSubCategory;
   items: RitelCartItem[];
   total: number;
+  buyTotal?: number;
   cashGiven?: number;
   change?: number;
-  paymentMethod: 'tunai' | 'qris' | 'transfer' | 'bon_warga';
-  status: 'lunas' | 'bon';
+  paymentMethod: 'tunai' | 'qris' | 'transfer' | 'bon_warga' | 'dp_cod';
+  status: 'lunas' | 'bon' | 'dp_menunggu_cod';
   createdAt: string;
   notes?: string;
+  // Furniture DP / COD & Delivery
+  isDpPayment?: boolean;
+  dpAmount?: number;
+  codRemaining?: number;
+  deliveryAddress?: string;
+  dueDate?: string; // Jatuh tempo bon
 }
 
 export type RitelEmployeeRole = 'admin' | 'spv' | 'kasir';
@@ -738,8 +779,68 @@ export interface UpdateConfig {
   autoCheckOnStartup: boolean;
   lastCheckedAt?: string;
   dismissedVersion?: string;
+}// ==========================================
+// KULINERQU: POS KULINER OFFLINE-FIRST (KIOS, MANGKAL & KELILING)
+// ==========================================
+export type KulinerSubCategory = 'kios_ruko' | 'mangkal_gerobak' | 'keliling_asongan';
+
+export interface KulinerMenuItem {
+  id: string;
+  name: string;
+  category: 'makanan' | 'minuman' | 'porsi_preset' | 'ekstra';
+  portionType?: 'biasa' | 'jumbo' | 'setengah' | 'toping' | 'custom';
+  price: number;
+  cogs: number; // Harga Pokok / Modal
+  isPreset?: boolean;
+  stockRemaining?: number;
+  dailyStartingStock?: number;
+  icon?: string;
 }
 
+export interface KulinerCartItem {
+  id: string;
+  menuId: string;
+  name: string;
+  portionType?: string;
+  price: number;
+  cogs: number;
+  qty: number;
+  notes?: string;
+}
 
+export interface KulinerOrder {
+  id: string;
+  orderNumber: string;
+  subCategory: KulinerSubCategory;
+  orderType: 'dine_in' | 'bungkus';
+  tableOrCustomer: string; // Nomor Meja atau Nama Pemesan
+  items: KulinerCartItem[];
+  subtotal: number;
+  discount: number;
+  total: number;
+  cogsTotal: number;
+  paymentMethod: 'cash' | 'qris' | 'bon';
+  cashGiven?: number;
+  change?: number;
+  status: 'paid' | 'open_bill' | 'bon_unpaid' | 'bon_partial' | 'cancelled';
+  kitchenNotes?: string;
+  createdAt: string;
+  paidAt?: string;
+  bonCustomerName?: string;
+  bonCustomerPhone?: string;
+  bonCustomerAddress?: string;
+  bonDueDate?: string;
+  bonPaidAmount?: number;
+}
 
-
+export interface KulinerProfile {
+  storeName: string;
+  ownerName: string;
+  phone: string;
+  address: string;
+  subCategory: KulinerSubCategory;
+  dailyPortionTarget: number;
+  dailyPortionRemaining: number;
+  lastResetDate: string;
+  qrisPayload?: string;
+}

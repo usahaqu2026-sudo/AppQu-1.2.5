@@ -27,7 +27,7 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
     <header
       className="sticky top-0 z-30 bg-stone-900 text-stone-100 border-b border-stone-800 px-3 pb-2 flex items-center justify-between shrink-0 select-none shadow-sm transition-all"
       style={{
-        paddingTop: 'calc(env(safe-area-inset-top, 0px) + 0.5rem)',
+        paddingTop: 'calc(max(env(safe-area-inset-top, 0px), 1.85rem) + 0.35rem)',
       }}
     >
       {/* Left: Navigation Drawer Toggle & Back to AppQu */}

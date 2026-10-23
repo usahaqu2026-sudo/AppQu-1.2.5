@@ -12,6 +12,9 @@ import {
   Stethoscope,
   ShoppingBag,
   Sparkles,
+  Scissors,
+  Flame,
+  Truck,
 } from 'lucide-react';
 import { UserProfile } from '../../types';
 import { PRESET_USERS } from '../../services/storageAppQu';
@@ -25,6 +28,9 @@ interface RoleSwitcherModalProps {
   onSwitchToBengkelQu?: () => void;
   onSwitchToKlinikQu?: () => void;
   onSwitchToRitelQu?: () => void;
+  onSwitchToKulinerQu?: () => void;
+  onSwitchToTransportasiQu?: () => void;
+  onSwitchToPelayananQu?: () => void;
   onOpenArsitektur: () => void;
 }
 
@@ -37,6 +43,9 @@ export const RoleSwitcherModal: React.FC<RoleSwitcherModalProps> = ({
   onSwitchToBengkelQu,
   onSwitchToKlinikQu,
   onSwitchToRitelQu,
+  onSwitchToKulinerQu,
+  onSwitchToTransportasiQu,
+  onSwitchToPelayananQu,
   onOpenArsitektur,
 }) => {
   if (!isOpen) return null;
@@ -254,6 +263,48 @@ export const RoleSwitcherModal: React.FC<RoleSwitcherModalProps> = ({
                 >
                   <Stethoscope className="w-4 h-4 text-emerald-400 shrink-0" />
                   <span className="truncate">KlinikQu</span>
+                </button>
+              )}
+
+              {onSwitchToPelayananQu && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    onClose();
+                    onSwitchToPelayananQu();
+                  }}
+                  className="p-2.5 rounded-xl bg-orange-950/80 hover:bg-orange-900 text-orange-200 font-bold border border-orange-500/40 flex items-center gap-2 shadow-xs transition-transform active:scale-95 cursor-pointer"
+                >
+                  <Scissors className="w-4 h-4 text-orange-400 shrink-0" />
+                  <span className="truncate">PelayananQu</span>
+                </button>
+              )}
+
+              {onSwitchToTransportasiQu && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    onClose();
+                    onSwitchToTransportasiQu();
+                  }}
+                  className="p-2.5 rounded-xl bg-teal-950/80 hover:bg-teal-900 text-teal-200 font-bold border border-teal-500/40 flex items-center gap-2 shadow-xs transition-transform active:scale-95 cursor-pointer"
+                >
+                  <Truck className="w-4 h-4 text-teal-400 shrink-0" />
+                  <span className="truncate">TransportasiQu</span>
+                </button>
+              )}
+
+              {onSwitchToKulinerQu && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    onClose();
+                    onSwitchToKulinerQu();
+                  }}
+                  className="p-2.5 rounded-xl bg-amber-950/80 hover:bg-amber-900 text-amber-200 font-bold border border-amber-500/40 flex items-center gap-2 shadow-xs transition-transform active:scale-95 cursor-pointer"
+                >
+                  <Flame className="w-4 h-4 text-amber-400 shrink-0" />
+                  <span className="truncate">KulinerQu</span>
                 </button>
               )}
 
