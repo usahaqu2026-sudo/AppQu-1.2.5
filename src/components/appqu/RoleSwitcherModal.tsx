@@ -15,6 +15,7 @@ import {
   Scissors,
   Flame,
   Truck,
+  HardHat,
 } from 'lucide-react';
 import { UserProfile } from '../../types';
 import { PRESET_USERS } from '../../services/storageAppQu';
@@ -31,6 +32,7 @@ interface RoleSwitcherModalProps {
   onSwitchToKulinerQu?: () => void;
   onSwitchToTransportasiQu?: () => void;
   onSwitchToPelayananQu?: () => void;
+  onSwitchToProyekQu?: () => void;
   onOpenArsitektur: () => void;
 }
 
@@ -46,6 +48,7 @@ export const RoleSwitcherModal: React.FC<RoleSwitcherModalProps> = ({
   onSwitchToKulinerQu,
   onSwitchToTransportasiQu,
   onSwitchToPelayananQu,
+  onSwitchToProyekQu,
   onOpenArsitektur,
 }) => {
   if (!isOpen) return null;
@@ -319,6 +322,20 @@ export const RoleSwitcherModal: React.FC<RoleSwitcherModalProps> = ({
                 >
                   <ShoppingBag className="w-4 h-4 text-blue-400 shrink-0" />
                   <span className="truncate">RitelQu</span>
+                </button>
+              )}
+
+              {onSwitchToProyekQu && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    onClose();
+                    onSwitchToProyekQu();
+                  }}
+                  className="p-2.5 rounded-xl bg-stone-900 hover:bg-stone-800 text-amber-300 font-bold border border-amber-500/40 flex items-center gap-2 shadow-xs transition-transform active:scale-95 cursor-pointer"
+                >
+                  <HardHat className="w-4 h-4 text-amber-400 shrink-0" />
+                  <span className="truncate">ProyekQu</span>
                 </button>
               )}
             </div>

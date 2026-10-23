@@ -16,6 +16,9 @@ import {
   AreaPoint,
   TransportasiCourier,
   SOSEphemeralRoom,
+  ProyekRecord,
+  VendorTukangExpense,
+  ProyekProfile,
 } from '../types';
 
 import bannerImg from '../assets/images/appqu_community_banner_1792459328196.jpg';
@@ -40,6 +43,9 @@ const STORAGE_KEYS = {
   COURIERS: 'appqu_couriers_v1',
   PENDING_VERIFICATIONS: 'appqu_pending_verifications_v1',
   SOS_ROOM: 'appqu_sos_room_v1',
+  PROYEK_PROJECTS: 'appqu_proyek_projects_v1',
+  PROYEK_EXPENSES: 'appqu_proyek_expenses_v1',
+  PROYEK_PROFILE: 'appqu_proyek_profile_v1',
 };
 
 // Preset Users for RBAC Demonstration (15 Kategori Peran dalam 4 Tier & Chain of Trust)
@@ -654,6 +660,26 @@ export const SEED_LETTERS: SuratPengantar[] = [
 // Seed UsahaQu (Local Businesses) with POS modules integrated
 export const SEED_BUSINESSES: LocalBusiness[] = [
   {
+    id: 'biz-proyekqu',
+    name: 'UsahaQu - Proyek (Estimator & RAB Borongan)',
+    category: 'jasa',
+    ownerName: 'Mandor Supri & Paguyuban Proyek RT 04',
+    blockNumber: 'Sentra Konstruksi & Workshop Blok E No. 05',
+    phone: '0813-8899-0022',
+    description: 'Manajemen Proyek Borongan & Estimasi RAB Akurat: Besi/Las, Furniture/Kayu, Aluminium, Renovasi Sipil, Pengeboran Lapangan, EO/Event/Sound, dan Web Design & Percetakan. Dilengkapi kalkulator volume (m², m\', m kedalaman, Ha, paket), rincian upah tukang, vendor material, serta pembayaran bertahap (DP -> Termin -> Pelunasan).',
+    rating: 4.96,
+    isPosActive: true,
+    posModuleKey: 'proyekqu',
+    badge: 'Modul Proyek & RAB',
+    imageUrl: 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=500',
+    products: [
+      { id: 'pr-1', name: 'Estimasi RAB Kanopi & Pagar Las', price: 450000, unit: 'm²', description: 'Besi holo galvanis & atap alderon' },
+      { id: 'pr-2', name: 'Kitchen Set Minimalis HPL Taco', price: 1850000, unit: "m'", description: 'Multiplek 18mm engsel slow motion' },
+      { id: 'pr-3', name: 'Kusen & Jendela Aluminium 3-4 Inch', price: 120000, unit: "m'", description: 'Aluminium Alexindo / Dacon + kaca 5mm' },
+      { id: 'pr-4', name: 'Pengeboran Sumur Air Bersih', price: 250000, unit: 'm', description: 'Pengeboran pipa PVC submersible hingga 40m' },
+    ],
+  },
+  {
     id: 'biz-pelayananqu',
     name: 'PelayananQu (6 Sub-Kategori Layanan Jasa Warga)',
     category: 'jasa',
@@ -1250,7 +1276,394 @@ export const AppQuStorageService = {
   saveSosRoom(room: SOSEphemeralRoom): void {
     localStorage.setItem(STORAGE_KEYS.SOS_ROOM, JSON.stringify(room));
   },
+
+  // ==========================================
+  // USAHAQU - PROYEK (PROYEKQU) STORAGE METHODS
+  // ==========================================
+  getProyekProjects(): ProyekRecord[] {
+    const raw = localStorage.getItem(STORAGE_KEYS.PROYEK_PROJECTS);
+    if (!raw) {
+      this.saveProyekProjects(SEED_PROYEK_PROJECTS);
+      return SEED_PROYEK_PROJECTS;
+    }
+    try {
+      return JSON.parse(raw);
+    } catch {
+      return SEED_PROYEK_PROJECTS;
+    }
+  },
+
+  saveProyekProjects(projects: ProyekRecord[]): void {
+    localStorage.setItem(STORAGE_KEYS.PROYEK_PROJECTS, JSON.stringify(projects));
+  },
+
+  getProyekExpenses(): VendorTukangExpense[] {
+    const raw = localStorage.getItem(STORAGE_KEYS.PROYEK_EXPENSES);
+    if (!raw) {
+      this.saveProyekExpenses(SEED_PROYEK_EXPENSES);
+      return SEED_PROYEK_EXPENSES;
+    }
+    try {
+      return JSON.parse(raw);
+    } catch {
+      return SEED_PROYEK_EXPENSES;
+    }
+  },
+
+  saveProyekExpenses(expenses: VendorTukangExpense[]): void {
+    localStorage.setItem(STORAGE_KEYS.PROYEK_EXPENSES, JSON.stringify(expenses));
+  },
+
+  getProyekProfile(): ProyekProfile {
+    const raw = localStorage.getItem(STORAGE_KEYS.PROYEK_PROFILE);
+    if (!raw) {
+      this.saveProyekProfile(SEED_PROYEK_PROFILE);
+      return SEED_PROYEK_PROFILE;
+    }
+    try {
+      return JSON.parse(raw);
+    } catch {
+      return SEED_PROYEK_PROFILE;
+    }
+  },
+
+  saveProyekProfile(profile: ProyekProfile): void {
+    localStorage.setItem(STORAGE_KEYS.PROYEK_PROFILE, JSON.stringify(profile));
+  },
 };
+
+// ==========================================
+// SEED DATA: USAHAQU - PROYEK (PROYEKQU)
+// ==========================================
+export const SEED_PROYEK_PROFILE: ProyekProfile = {
+  namaWorkshop: 'Bengkel Las & Karya Mandiri RT 04',
+  penanggungJawab: 'Mandor Supriyanto',
+  kontak: '0813-8899-0022',
+  alamatWorkshop: 'Jl. Melati Blok E No. 05, RT 04 / RW 09',
+  bankRekening: 'BCA 8820-192-331 a.n Supriyanto',
+  qrisPayload: '00020101021126570014ID.GO.QRIS.WWW01189360099900010203040215ID10203040506075204581253033605802ID5919BENGKEL PROYEK MANDIRI6007BANDUNG61054011562070703A01630489A1',
+  headerSurat: 'BENGKEL LAS, FURNITURE & KONSTRUKSI SIPIL "KARYA MANDIRI"\nSpesialis Borongan, Kanopi, Kitchen Set, Kusen Aluminium & Sumur Bor',
+  footerSurat: 'Garansi pengerjaan 3 bulan setelah serah terima unit/pekerjaan.\nPembayaran bertahap via Transfer/Tunai sesuai termin progress yang disepakati.',
+};
+
+export const SEED_PROYEK_PROJECTS: ProyekRecord[] = [
+  {
+    id: 'prj-001',
+    kodeProyek: 'PRJ-2610-001',
+    namaProyek: 'Kanopi Carport Holo Galvanis & Alderon RS',
+    kategori: 'besi_las',
+    klienNama: 'Bpk. Hendro Wicaksono',
+    klienKontak: '0812-7766-5544',
+    klienAlamat: 'Blok B2 No. 08, RT 04',
+    statusProyek: 'sedang_dikerjakan',
+    dimensi: {
+      unit: 'm2',
+      panjang: 6,
+      lebar: 4,
+      kedalaman: 0,
+      jumlah: 1,
+      calculatedVolume: 24,
+      unitLabel: 'm²',
+    },
+    rab: {
+      bahanBakuUtama: 4800000, // Besi holo 4x8 & 4x4 galvanis
+      aksesoris: 1200000, // Atap Alderon RS, baut roofing, sealant, cat anti karat
+      upahTukang: 1800000, // 2 Tukang las x 3 hari
+      transportMobilisasi: 350000, // Sewa pickup & solar
+      subtotalModal: 8150000,
+      marginPercent: 25,
+      nominalMargin: 2037500,
+      totalBiayaPenawaran: 10187500,
+    },
+    rincianBahan: [
+      { id: 'mat-1', nama: 'Besi Holo 4x8 Galvanis 1.4mm', qty: 6, satuan: 'batang', hargaSatuan: 220000, total: 1320000 },
+      { id: 'mat-2', nama: 'Besi Holo 4x4 Galvanis 1.4mm', qty: 10, satuan: 'batang', hargaSatuan: 145000, total: 1450000 },
+      { id: 'mat-3', nama: 'Atap Alderon RS Single Layer', qty: 24, satuan: 'meter', hargaSatuan: 84500, total: 2030000 },
+      { id: 'mat-4', nama: 'Baut Roofing & Fisher Dinabolt 12mm', qty: 1, satuan: 'dus', hargaSatuan: 350000, total: 350000, isAksesoris: true },
+      { id: 'mat-5', nama: 'Cat Primer Zink Chromate & Finish Hitam Doff', qty: 2, satuan: 'kaleng', hargaSatuan: 185000, total: 370000, isAksesoris: true },
+      { id: 'mat-6', nama: 'Kawat Las RB-26 2.6mm & Sealant Neutral', qty: 1, satuan: 'paket', hargaSatuan: 480000, total: 480000, isAksesoris: true },
+    ],
+    rincianTukang: [
+      { id: 'tuk-1', peran: 'Tukang Las Utama', namaPekerja: 'Mas Joko (Las)', jumlahOrang: 1, durasiHari: 3, upahHarian: 180000, total: 540000 },
+      { id: 'tuk-2', peran: 'Asisten Tukang / Kenek', namaPekerja: 'Dedi (Kenek)', jumlahOrang: 1, durasiHari: 3, upahHarian: 130000, total: 390000 },
+      { id: 'tuk-3', peran: 'Tukang Pasang Atap & Finishing', namaPekerja: 'Mas Bambang & Tim', jumlahOrang: 2, durasiHari: 2, upahHarian: 217500, total: 870000 },
+    ],
+    terminList: [
+      {
+        id: 'term-1',
+        stageType: 'dp',
+        stageName: 'DP (Uang Muka 30% / Kunci Jadwal & Beli Besi)',
+        targetPercent: 30,
+        nominalTarget: 3056250,
+        nominalDibayar: 3056250,
+        status: 'lunas',
+        tglBayar: '2026-10-15',
+        metode: 'transfer',
+        catatan: 'BCA Transfer a.n Pak Hendro - Lunas',
+      },
+      {
+        id: 'term-2',
+        stageType: 'termin_1',
+        stageName: 'Termin 1 (Progress 40% - Rangka Las Terpasang)',
+        targetPercent: 40,
+        nominalTarget: 4075000,
+        nominalDibayar: 4075000,
+        status: 'lunas',
+        tglBayar: '2026-10-20',
+        metode: 'transfer',
+        catatan: 'Rangka holo tegak & cat dasar selesai',
+      },
+      {
+        id: 'term-3',
+        stageType: 'pelunasan',
+        stageName: 'Pelunasan (Sisa 30% - Serah Terima & Pasang Atap)',
+        targetPercent: 30,
+        nominalTarget: 3056250,
+        nominalDibayar: 0,
+        status: 'belum',
+        catatan: 'Menunggu pemasangan atap alderon & perapian',
+      },
+    ],
+    catatanSpesifikasi: 'Tiang utama holo 4x8 double, rangka jari-jari 4x4 jarak 60cm, atap alderon warna putih doff, cat besi hitam doff semi gloss anti karat.',
+    tanggalMulai: '2026-10-16',
+    targetSelesai: '2026-10-25',
+    createdAt: '2026-10-14T08:30:00Z',
+    updatedAt: '2026-10-21T11:20:00Z',
+  },
+  {
+    id: 'prj-002',
+    kodeProyek: 'PRJ-2610-002',
+    namaProyek: 'Kitchen Set Minimalis HPL Taco Grey & Top Marmer',
+    kategori: 'furniture_kayu',
+    klienNama: 'Ibu Ratna Dewi',
+    klienKontak: '0813-2211-9988',
+    klienAlamat: 'Blok A1 No. 04, RT 04',
+    statusProyek: 'dp_terbayar',
+    dimensi: {
+      unit: 'mlari',
+      panjang: 4.5,
+      lebar: 1,
+      kedalaman: 0,
+      jumlah: 1,
+      calculatedVolume: 4.5,
+      unitLabel: "m'",
+    },
+    rab: {
+      bahanBakuUtama: 3850000, // Multiplek 18mm & HPL Taco
+      aksesoris: 1650000, // Engsel slow motion Huben, rel laci double track, rak piring stainless
+      upahTukang: 1900000, // Tukang kayu custom interior 4 hari
+      transportMobilisasi: 250000, // Ongkos kirim workshop ke lokasi
+      subtotalModal: 7650000,
+      marginPercent: 30,
+      nominalMargin: 2295000,
+      totalBiayaPenawaran: 9945000,
+    },
+    rincianBahan: [
+      { id: 'f-1', nama: 'Multiplek Meranti Super 18mm', qty: 4, satuan: 'lembar', hargaSatuan: 275000, total: 1100000 },
+      { id: 'f-2', nama: 'HPL Taco Solid Grey Textured', qty: 5, satuan: 'lembar', hargaSatuan: 210000, total: 1050000 },
+      { id: 'f-3', nama: 'Multiplek 9mm Backpanel & Blok', qty: 3, satuan: 'lembar', hargaSatuan: 165000, total: 495000 },
+      { id: 'f-4', nama: 'Lem Kuning Aica Aibon 2.5kg', qty: 2, satuan: 'kaleng', hargaSatuan: 140000, total: 280000 },
+      { id: 'f-5', nama: 'Edging PVC Taco Grey 1mm', qty: 1, satuan: 'roll', hargaSatuan: 180000, total: 180000 },
+      { id: 'f-6', nama: 'Top Table Granit Sintetis Hitam', qty: 4.5, satuan: "m'", hargaSatuan: 165000, total: 742500 },
+      { id: 'f-7', nama: 'Engsel Soft-Close Huben & Rel Double Track', qty: 1, satuan: 'set', hargaSatuan: 950000, total: 950000, isAksesoris: true },
+      { id: 'f-8', nama: 'Rak Piring Stainless Kabinet Bawah', qty: 1, satuan: 'unit', hargaSatuan: 700000, total: 700000, isAksesoris: true },
+    ],
+    rincianTukang: [
+      { id: 'tuk-f1', peran: 'Tukang Kayu Interior', namaPekerja: 'Pakde Marto', jumlahOrang: 1, durasiHari: 4, upahHarian: 250000, total: 1000000 },
+      { id: 'tuk-f2', peran: 'Asisten Perakitan & Finishing HPL', namaPekerja: 'Rudi Interior', jumlahOrang: 1, durasiHari: 4, upahHarian: 150000, total: 600000 },
+      { id: 'tuk-f3', peran: 'Instalasi Lapangan & Fitting', namaPekerja: 'Tim Pemasang', jumlahOrang: 2, durasiHari: 1, upahHarian: 150000, total: 300000 },
+    ],
+    terminList: [
+      {
+        id: 'term-f1',
+        stageType: 'dp',
+        stageName: 'DP (Uang Muka 40% / Belanja Bahan Multiplek & HPL)',
+        targetPercent: 40,
+        nominalTarget: 3978000,
+        nominalDibayar: 3978000,
+        status: 'lunas',
+        tglBayar: '2026-10-18',
+        metode: 'transfer',
+        catatan: 'DP Masuk, bahan sudah dipotong di workshop',
+      },
+      {
+        id: 'term-f2',
+        stageType: 'termin_1',
+        stageName: 'Termin 1 (Progress 35% - Modul Terakit Siap Pasang)',
+        targetPercent: 35,
+        nominalTarget: 3480750,
+        nominalDibayar: 0,
+        status: 'belum',
+        catatan: 'Rencana serah modul hari Sabtu',
+      },
+      {
+        id: 'term-f3',
+        stageType: 'pelunasan',
+        stageName: 'Pelunasan (Sisa 25% - Pemasangan & Finishing Bersih)',
+        targetPercent: 25,
+        nominalTarget: 2486250,
+        nominalDibayar: 0,
+        status: 'belum',
+        catatan: 'Pengecekan engsel & silikon edging',
+      },
+    ],
+    catatanSpesifikasi: 'Tinggi kabinet bawah 85cm, kabinet atas 70cm, edging PVC tebal tahan lembap, lubang kompor tanam 2 tungku rinnai.',
+    tanggalMulai: '2026-10-19',
+    targetSelesai: '2026-10-30',
+    createdAt: '2026-10-17T09:00:00Z',
+    updatedAt: '2026-10-18T14:30:00Z',
+  },
+  {
+    id: 'prj-003',
+    kodeProyek: 'PRJ-2610-003',
+    namaProyek: 'Pengeboran Sumur Jetpump Dalam 36 Meter & Toren Air',
+    kategori: 'pengeboran_lapangan',
+    klienNama: 'Bpk. Sugeng Waluyo',
+    klienKontak: '0812-4455-6677',
+    klienAlamat: 'Blok C2 No. 15, RT 04',
+    statusProyek: 'selesai_pelunasan',
+    dimensi: {
+      unit: 'mkedalaman',
+      panjang: 0,
+      lebar: 0,
+      kedalaman: 36,
+      jumlah: 1,
+      calculatedVolume: 36,
+      unitLabel: 'meter',
+    },
+    rab: {
+      bahanBakuUtama: 2450000, // Pipa PVC 4" Rucika AW & Pipa hisap
+      aksesoris: 1100000, // Otomatis radar, tusen klep, kabel pompa, sok drat kuningan
+      upahTukang: 1800000, // 2 Operator rig bor x 3 hari
+      transportMobilisasi: 300000, // Mobilisasi alat bor diesel & sirkulasi air
+      subtotalModal: 5650000,
+      marginPercent: 25,
+      nominalMargin: 1412500,
+      totalBiayaPenawaran: 7062500,
+    },
+    rincianBahan: [
+      { id: 'b-1', nama: 'Pipa PVC 4 Inch Rucika AW Casing', qty: 9, satuan: 'batang', hargaSatuan: 165000, total: 1485000 },
+      { id: 'b-2', nama: 'Pipa PVC 1 Inch & 1.25 Inch Hisap', qty: 8, satuan: 'batang', hargaSatuan: 72000, total: 576000 },
+      { id: 'b-3', nama: 'Pasir Silika & Koral Filter Dasar', qty: 5, satuan: 'karung', hargaSatuan: 45000, total: 225000 },
+      { id: 'b-4', nama: 'Tusen Klep Kuningan 1 Inch & Otomatis', qty: 1, satuan: 'set', hargaSatuan: 380000, total: 380000, isAksesoris: true },
+      { id: 'b-5', nama: 'Kabel Listrik Eterna 3x1.5mm & Lem PVC', qty: 1, satuan: 'paket', hargaSatuan: 320000, total: 320000, isAksesoris: true },
+    ],
+    rincianTukang: [
+      { id: 'tuk-b1', peran: 'Master Operator Bor Diesel', namaPekerja: 'Bang Somad', jumlahOrang: 1, durasiHari: 3, upahHarian: 220000, total: 660000 },
+      { id: 'tuk-b2', peran: 'Kru Lapangan & Sirkulasi Lumpur', namaPekerja: 'Agus & Ilham', jumlahOrang: 2, durasiHari: 3, upahHarian: 150000, total: 900000 },
+      { id: 'tuk-b3', peran: 'Instalasi Pompa & Kuras Air Keruh', namaPekerja: 'Bang Somad', jumlahOrang: 1, durasiHari: 1, upahHarian: 240000, total: 240000 },
+    ],
+    terminList: [
+      {
+        id: 'term-b1',
+        stageType: 'dp',
+        stageName: 'DP (Uang Muka 35% - Mobilisasi Mesin & Pipa)',
+        targetPercent: 35,
+        nominalTarget: 2471875,
+        nominalDibayar: 2471875,
+        status: 'lunas',
+        tglBayar: '2026-10-10',
+        metode: 'tunai',
+        catatan: 'Diterima tunai di lokasi',
+      },
+      {
+        id: 'term-b2',
+        stageType: 'termin_1',
+        stageName: 'Termin 1 (Progress 35% - Tembus Sumber Air 36m)',
+        targetPercent: 35,
+        nominalTarget: 2471875,
+        nominalDibayar: 2471875,
+        status: 'lunas',
+        tglBayar: '2026-10-12',
+        metode: 'transfer',
+        catatan: 'Air keluar deras & jernih',
+      },
+      {
+        id: 'term-b3',
+        stageType: 'pelunasan',
+        stageName: 'Pelunasan (Sisa 30% - Kuras Selesai & Sambung Toren)',
+        targetPercent: 30,
+        nominalTarget: 2118750,
+        nominalDibayar: 2118750,
+        status: 'lunas',
+        tglBayar: '2026-10-14',
+        metode: 'transfer',
+        catatan: 'Proyek tuntas 100% tanpa kendala',
+      },
+    ],
+    catatanSpesifikasi: 'Casing 4 inch ditanam 28 meter, screen pipa bawah disaring koral pasir silika, kedalaman total 36 meter, air dites jernih tidak bau.',
+    tanggalMulai: '2026-10-10',
+    targetSelesai: '2026-10-14',
+    createdAt: '2026-10-09T10:00:00Z',
+    updatedAt: '2026-10-14T17:00:00Z',
+  },
+];
+
+export const SEED_PROYEK_EXPENSES: VendorTukangExpense[] = [
+  {
+    id: 'exp-001',
+    proyekId: 'prj-001',
+    proyekNama: 'Kanopi Carport Holo Galvanis & Alderon RS',
+    kategori: 'vendor_material',
+    namaPihak: 'TB. Sinar Logam Baja Abadi',
+    rincian: 'Besi Holo Galvanis 4x8 (6 btg) & 4x4 (10 btg)',
+    nominal: 2770000,
+    tglTransaksi: '2026-10-16',
+    statusBayar: 'lunas',
+    noHp: '0812-3344-8899',
+    notaRef: 'NOTA-SLB-8812',
+  },
+  {
+    id: 'exp-002',
+    proyekId: 'prj-001',
+    proyekNama: 'Kanopi Carport Holo Galvanis & Alderon RS',
+    kategori: 'vendor_material',
+    namaPihak: 'Depo Atap Alderon Cemerlang',
+    rincian: 'Alderon RS 24 meter + baut roofing 1 dus',
+    nominal: 2380000,
+    tglTransaksi: '2026-10-17',
+    statusBayar: 'bon_hutang',
+    noHp: '0818-4455-6611',
+    notaRef: 'BON-DAC-1044',
+  },
+  {
+    id: 'exp-003',
+    proyekId: 'prj-001',
+    proyekNama: 'Kanopi Carport Holo Galvanis & Alderon RS',
+    kategori: 'upah_tukang',
+    namaPihak: 'Mas Joko (Las Utama) & Dedi (Kenek)',
+    rincian: 'Upah pengerjaan las potong & rakit rangka (3 hari)',
+    nominal: 930000,
+    tglTransaksi: '2026-10-19',
+    statusBayar: 'lunas',
+    noHp: '0857-1122-3344',
+  },
+  {
+    id: 'exp-004',
+    proyekId: 'prj-002',
+    proyekNama: 'Kitchen Set Minimalis HPL Taco Grey',
+    kategori: 'vendor_material',
+    namaPihak: 'Toko Kayu Indah Multiplek & Taco',
+    rincian: 'Multiplek Meranti 18mm (4 lbr) & HPL Taco Grey (5 lbr)',
+    nominal: 2150000,
+    tglTransaksi: '2026-10-19',
+    statusBayar: 'lunas',
+    noHp: '0878-9988-1234',
+    notaRef: 'INV-TKI-9901',
+  },
+  {
+    id: 'exp-005',
+    proyekId: 'prj-002',
+    proyekNama: 'Kitchen Set Minimalis HPL Taco Grey',
+    kategori: 'upah_tukang',
+    namaPihak: 'Pakde Marto (Tukang Kayu Interior)',
+    rincian: 'Panjar upah potong pola & laminasi HPL tahap 1',
+    nominal: 600000,
+    tglTransaksi: '2026-10-20',
+    statusBayar: 'lunas',
+    noHp: '0812-6655-4433',
+  },
+];
 
 // ==========================================
 // SEED AREAQU POINTS (PETA GARIS & SEWA LAPAK DIGITAL)

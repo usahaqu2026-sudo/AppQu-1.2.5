@@ -32,6 +32,7 @@ import { RitelQuView } from './components/ritel/RitelQuView';
 import { KulinerQuView } from './components/kuliner/KulinerQuView';
 import { TransportasiQuView } from './components/transportasi/TransportasiQuView';
 import { PelayananQuView } from './components/pelayanan/PelayananQuView';
+import { ProyekQuView } from './components/proyek/ProyekQuView';
 
 import {
   TableItem,
@@ -66,10 +67,10 @@ import { Sparkles } from 'lucide-react';
 
 export default function App() {
   // ====================================================
-  // MASTER APPLICATION MODE: 'appqu' | 'baksoqu' | 'bengkelqu' | 'klinikqu' | 'ritelqu' | 'kulinerqu' | 'transportasiqu' | 'pelayananqu'
+  // MASTER APPLICATION MODE: 'appqu' | 'baksoqu' | 'bengkelqu' | 'klinikqu' | 'ritelqu' | 'kulinerqu' | 'transportasiqu' | 'pelayananqu' | 'proyekqu'
   // ====================================================
   const [appMode, setAppMode] = useState<
-    'appqu' | 'baksoqu' | 'bengkelqu' | 'klinikqu' | 'ritelqu' | 'kulinerqu' | 'transportasiqu' | 'pelayananqu'
+    'appqu' | 'baksoqu' | 'bengkelqu' | 'klinikqu' | 'ritelqu' | 'kulinerqu' | 'transportasiqu' | 'pelayananqu' | 'proyekqu'
   >('appqu');
 
   // AppQu Active Module (With AreaQu, ChatQu, and Setting)
@@ -304,6 +305,12 @@ export default function App() {
   const handleSwitchToPelayananQu = () => {
     setAppMode('pelayananqu');
     showNotification('Beralih ke PelayananQu: 6 Sub-Kategori Jasa & Layanan Warga');
+  };
+
+  // Switch to ProyekQu (UsahaQu - Proyek)
+  const handleSwitchToProyekQu = () => {
+    setAppMode('proyekqu');
+    showNotification('Beralih ke UsahaQu - Proyek: Estimator & RAB Borongan');
   };
 
   // Return to AppQu Ecosystem
@@ -723,6 +730,7 @@ export default function App() {
                 onSwitchToKulinerQu={handleSwitchToKulinerQu}
                 onSwitchToTransportasiQu={handleSwitchToTransportasiQu}
                 onSwitchToPelayananQu={handleSwitchToPelayananQu}
+                onSwitchToProyekQu={handleSwitchToProyekQu}
                 onOpenAreaQu={() => setActiveAppQuModule('area')}
                 onOpenChat={(threadId) => {
                   setSelectedChatThreadId(threadId || null);
@@ -890,6 +898,7 @@ export default function App() {
             onSwitchToKulinerQu={handleSwitchToKulinerQu}
             onSwitchToTransportasiQu={handleSwitchToTransportasiQu}
             onSwitchToPelayananQu={handleSwitchToPelayananQu}
+            onSwitchToProyekQu={handleSwitchToProyekQu}
             onOpenArsitektur={() => setActiveAppQuModule('arsitektur')}
           />
         </div>
@@ -1159,6 +1168,19 @@ export default function App() {
         <PelayananQuView
           currentUser={currentUser}
           onBackToAppQu={handleReturnToAppQu}
+          showNotification={showNotification}
+        />
+      )}
+
+      {/* ========================================================= */}
+      {/* 9. USAHAQU - PROYEK (RAB, VOLUME & PEMBAYARAN TERMIN)     */}
+      {/* ========================================================= */}
+      {appMode === 'proyekqu' && (
+        <ProyekQuView
+          currentUser={currentUser}
+          onBackToAppQu={handleReturnToAppQu}
+          onSwitchToRitelQu={handleSwitchToRitelQu}
+          onSwitchToPelayananQu={handleSwitchToPelayananQu}
           showNotification={showNotification}
         />
       )}

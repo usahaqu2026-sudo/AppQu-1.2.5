@@ -24,6 +24,7 @@ import {
   UtensilsCrossed,
   Truck,
   Scissors,
+  HardHat,
 } from 'lucide-react';
 import { LocalBusiness, UserProfile, LocalProduct, BusinessMode } from '../../types';
 
@@ -37,6 +38,7 @@ interface UsahaQuViewProps {
   onSwitchToKulinerQu?: () => void;
   onSwitchToTransportasiQu?: () => void;
   onSwitchToPelayananQu?: () => void;
+  onSwitchToProyekQu?: () => void;
   onOpenAreaQu?: () => void;
   onOpenChat?: (threadId?: string) => void;
   onUpdateBusinesses: (businesses: LocalBusiness[]) => void;
@@ -53,6 +55,7 @@ export const UsahaQuView: React.FC<UsahaQuViewProps> = ({
   onSwitchToKulinerQu,
   onSwitchToTransportasiQu,
   onSwitchToPelayananQu,
+  onSwitchToProyekQu,
   onOpenAreaQu,
   onOpenChat,
   onUpdateBusinesses,
@@ -73,7 +76,9 @@ export const UsahaQuView: React.FC<UsahaQuViewProps> = ({
 
   const filteredBusinesses = businesses.filter((b) => {
     if (activeCategory !== 'all') {
-      if (activeCategory === 'jasa') {
+      if (activeCategory === 'proyek') {
+        if (b.posModuleKey !== 'proyekqu') return false;
+      } else if (activeCategory === 'jasa') {
         if (b.category !== 'jasa' && b.category !== 'laundry' && b.posModuleKey !== 'pelayananqu') return false;
       } else if (activeCategory === 'kuliner') {
         if (b.category !== 'kuliner' && b.posModuleKey !== 'kulinerqu' && b.posModuleKey !== 'baksoqu') return false;
@@ -131,13 +136,23 @@ export const UsahaQuView: React.FC<UsahaQuViewProps> = ({
             <h2 className="text-base font-black tracking-tight text-stone-900">UsahaQu</h2>
           </div>
           <span className="text-xs bg-stone-100 text-stone-700 font-extrabold px-2.5 py-0.5 rounded-full border border-stone-200">
-            7 Unit Usaha
+            8 Unit Usaha
           </span>
         </div>
 
         {/* List View: Minimalis tanpa kotak, hanya garis tipis sebagai pembatas */}
         <div className="divide-y divide-stone-200/90 border-y border-stone-200/90 bg-transparent">
           {[
+            {
+              id: 'proyekqu',
+              name: 'UsahaQu - Proyek',
+              tagline: '7 Kategori Borongan: Besi, Kayu, Aluminium, Sipil, Bor & EO',
+              badge: 'Baru • RAB & Termin',
+              icon: HardHat,
+              bg: 'bg-stone-900',
+              textBadge: 'bg-amber-100 text-stone-900 border-amber-400',
+              onClick: onSwitchToProyekQu,
+            },
             {
               id: 'pelayananqu',
               name: 'PelayananQu',
@@ -283,6 +298,7 @@ export const UsahaQuView: React.FC<UsahaQuViewProps> = ({
         <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar text-xs">
           {[
             { id: 'all', label: 'Semua Lapak' },
+            { id: 'proyek', label: 'Proyek & Borongan (RAB)' },
             { id: 'jasa', label: 'PelayananQu (Jasa & Servis)' },
             { id: 'kuliner', label: 'Kuliner & Warung' },
             { id: 'kesehatan', label: 'Kesehatan & Klinik' },
@@ -402,7 +418,8 @@ export const UsahaQuView: React.FC<UsahaQuViewProps> = ({
           /* List View: Hanya Logo/Ikon dan Nama */
           <div className="divide-y divide-stone-100 bg-white rounded-2xl border border-stone-200/80 overflow-hidden shadow-2xs">
             {filteredBusinesses.map((biz) => {
-              const isPelayananQu = biz.posModuleKey === 'pelayananqu' || biz.category === 'jasa' || biz.category === 'laundry';
+              const isProyekQu = biz.posModuleKey === 'proyekqu';
+              const isPelayananQu = !isProyekQu && (biz.posModuleKey === 'pelayananqu' || biz.category === 'jasa' || biz.category === 'laundry');
               const isTransportasiQu = biz.posModuleKey === 'transportasiqu';
               const isKulinerQu = biz.posModuleKey === 'kulinerqu';
               const isBaksoQu = biz.posModuleKey === 'baksoqu';
@@ -411,7 +428,8 @@ export const UsahaQuView: React.FC<UsahaQuViewProps> = ({
               const isRitelQu = biz.posModuleKey === 'ritelqu';
 
               const handleClick = () => {
-                if (isPelayananQu && onSwitchToPelayananQu) onSwitchToPelayananQu();
+                if (isProyekQu && onSwitchToProyekQu) onSwitchToProyekQu();
+                else if (isPelayananQu && onSwitchToPelayananQu) onSwitchToPelayananQu();
                 else if (isTransportasiQu && onSwitchToTransportasiQu) onSwitchToTransportasiQu();
                 else if (isKulinerQu && onSwitchToKulinerQu) onSwitchToKulinerQu();
                 else if (isBaksoQu) onSwitchToBaksoQu();
@@ -431,7 +449,9 @@ export const UsahaQuView: React.FC<UsahaQuViewProps> = ({
                   <div className="flex items-center gap-3 min-w-0">
                     <div
                       className={`w-10 h-10 rounded-xl flex items-center justify-center font-bold text-base shrink-0 shadow-2xs group-hover:scale-105 transition-transform ${
-                        isPelayananQu
+                        isProyekQu
+                          ? 'bg-stone-900 text-amber-400'
+                          : isPelayananQu
                           ? 'bg-orange-600 text-white'
                           : isTransportasiQu
                           ? 'bg-teal-700 text-white'
@@ -448,7 +468,9 @@ export const UsahaQuView: React.FC<UsahaQuViewProps> = ({
                           : 'bg-emerald-700 text-white'
                       }`}
                     >
-                      {isPelayananQu ? (
+                      {isProyekQu ? (
+                        <HardHat className="w-5 h-5 text-amber-400" />
+                      ) : isPelayananQu ? (
                         <Scissors className="w-5 h-5 text-white" />
                       ) : isTransportasiQu ? (
                         <Truck className="w-5 h-5 text-white" />
@@ -471,6 +493,11 @@ export const UsahaQuView: React.FC<UsahaQuViewProps> = ({
                         <span className="font-bold text-base text-stone-900 group-hover:text-emerald-800 transition-colors truncate">
                           {biz.name}
                         </span>
+                        {isProyekQu && (
+                          <span className="text-[10px] font-black px-1.5 py-0.5 rounded bg-stone-900 text-amber-300 border border-amber-400/50 shrink-0">
+                            UsahaQu Proyek
+                          </span>
+                        )}
                         {isPelayananQu && (
                           <span className="text-[10px] font-black px-1.5 py-0.5 rounded bg-orange-100 text-orange-800 border border-orange-200 shrink-0">
                             PelayananQu
@@ -490,7 +517,8 @@ export const UsahaQuView: React.FC<UsahaQuViewProps> = ({
         ) : (
           /* Katalog View: Detail Card */
           filteredBusinesses.map((biz) => {
-            const isPelayananQu = biz.posModuleKey === 'pelayananqu' || biz.category === 'jasa' || biz.category === 'laundry';
+            const isProyekQu = biz.posModuleKey === 'proyekqu';
+            const isPelayananQu = !isProyekQu && (biz.posModuleKey === 'pelayananqu' || biz.category === 'jasa' || biz.category === 'laundry');
             const isTransportasiQu = biz.posModuleKey === 'transportasiqu';
             const isKulinerQu = biz.posModuleKey === 'kulinerqu';
             const isBaksoQu = biz.posModuleKey === 'baksoqu';
@@ -502,7 +530,9 @@ export const UsahaQuView: React.FC<UsahaQuViewProps> = ({
               <div
                 key={biz.id}
                 className={`bg-white rounded-2xl border p-4 shadow-2xs transition-all space-y-3 ${
-                  isPelayananQu
+                  isProyekQu
+                    ? 'border-amber-400 ring-1 ring-amber-300/50'
+                    : isPelayananQu
                     ? 'border-orange-400 ring-1 ring-orange-300/50'
                     : isTransportasiQu
                     ? 'border-teal-400 ring-1 ring-teal-300/50'
@@ -523,7 +553,9 @@ export const UsahaQuView: React.FC<UsahaQuViewProps> = ({
                   <div className="flex items-center gap-3">
                     <div
                       className={`w-12 h-12 rounded-2xl flex items-center justify-center font-bold text-base shrink-0 ${
-                        isPelayananQu
+                        isProyekQu
+                          ? 'bg-stone-900 text-amber-400 shadow'
+                          : isPelayananQu
                           ? 'bg-gradient-to-br from-orange-600 to-amber-600 text-white shadow'
                           : isTransportasiQu
                           ? 'bg-teal-700 text-white shadow'
@@ -540,7 +572,9 @@ export const UsahaQuView: React.FC<UsahaQuViewProps> = ({
                           : 'bg-emerald-100 text-emerald-800'
                       }`}
                     >
-                      {isPelayananQu ? (
+                      {isProyekQu ? (
+                        <HardHat className="w-6 h-6 text-amber-400" />
+                      ) : isPelayananQu ? (
                         <Scissors className="w-6 h-6 text-white" />
                       ) : isTransportasiQu ? (
                         <Truck className="w-6 h-6 text-white" />
@@ -642,7 +676,17 @@ export const UsahaQuView: React.FC<UsahaQuViewProps> = ({
                     )}
                   </div>
 
-                  {isPelayananQu && onSwitchToPelayananQu ? (
+                  {isProyekQu && onSwitchToProyekQu ? (
+                    <button
+                      type="button"
+                      onClick={onSwitchToProyekQu}
+                      className="px-3.5 py-1.5 bg-stone-900 hover:bg-stone-800 text-amber-300 border border-amber-400/50 rounded-xl text-xs font-black flex items-center gap-1.5 shadow-sm active:scale-95 transition-all cursor-pointer"
+                    >
+                      <HardHat className="w-3.5 h-3.5 text-amber-400" />
+                      <span>Buka UsahaQu Proyek</span>
+                      <ArrowRight className="w-3.5 h-3.5" />
+                    </button>
+                  ) : isPelayananQu && onSwitchToPelayananQu ? (
                     <button
                       type="button"
                       onClick={onSwitchToPelayananQu}

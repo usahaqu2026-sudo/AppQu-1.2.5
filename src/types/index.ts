@@ -362,7 +362,7 @@ export interface LocalBusiness {
   description: string;
   rating: number;
   isPosActive?: boolean;
-  posModuleKey?: 'baksoqu' | 'bengkelqu' | 'klinikqu' | 'ritelqu' | 'kulinerqu' | 'transportasiqu' | 'pelayananqu';
+  posModuleKey?: 'baksoqu' | 'bengkelqu' | 'klinikqu' | 'ritelqu' | 'kulinerqu' | 'transportasiqu' | 'pelayananqu' | 'proyekqu';
   businessMode?: BusinessMode;
   osmTag?: string; // Tag auto-detect OSM (e.g. amenity=restaurant, shop=convenience)
   badge?: string;
@@ -844,3 +844,125 @@ export interface KulinerProfile {
   lastResetDate: string;
   qrisPayload?: string;
 }
+
+// ==========================================
+// USAHAQU - PROYEK (PROYEKQU)
+// Modul Borongan & Estimasi Biaya Berbasis RAB, Volume, Pembayaran Bertahap
+// ==========================================
+export type ProyekCategory =
+  | 'besi_las'
+  | 'furniture_kayu'
+  | 'aluminium'
+  | 'renovasi_sipil'
+  | 'pengeboran_lapangan'
+  | 'eo_event_sound'
+  | 'web_percetakan';
+
+export type CalculationUnit =
+  | 'm2'
+  | 'mlari'
+  | 'mkedalaman'
+  | 'hektar_luas'
+  | 'unit_paket';
+
+export interface ProyekDimension {
+  unit: CalculationUnit;
+  panjang: number;
+  lebar: number;
+  kedalaman: number;
+  jumlah: number;
+  calculatedVolume: number;
+  unitLabel: string;
+}
+
+export interface RabCostBreakdown {
+  bahanBakuUtama: number;
+  aksesoris: number;
+  upahTukang: number;
+  transportMobilisasi: number;
+  subtotalModal: number;
+  marginPercent: number;
+  nominalMargin: number;
+  totalBiayaPenawaran: number;
+}
+
+export interface TerminStage {
+  id: string;
+  stageType: 'dp' | 'termin_1' | 'termin_2' | 'pelunasan';
+  stageName: string;
+  targetPercent: number;
+  nominalTarget: number;
+  nominalDibayar: number;
+  status: 'belum' | 'sebagian' | 'lunas';
+  tglBayar?: string;
+  metode?: 'tunai' | 'transfer' | 'qris';
+  catatan?: string;
+  buktiRef?: string;
+}
+
+export interface VendorTukangExpense {
+  id: string;
+  proyekId: string;
+  proyekNama: string;
+  kategori: 'vendor_material' | 'upah_tukang' | 'transport_sewa' | 'lainnya';
+  namaPihak: string;
+  rincian: string;
+  nominal: number;
+  tglTransaksi: string;
+  statusBayar: 'lunas' | 'bon_hutang';
+  noHp?: string;
+  notaRef?: string;
+}
+
+export interface MaterialItem {
+  id: string;
+  nama: string;
+  qty: number;
+  satuan: string;
+  hargaSatuan: number;
+  total: number;
+  isAksesoris?: boolean;
+}
+
+export interface TukangItem {
+  id: string;
+  peran: string;
+  namaPekerja?: string;
+  jumlahOrang: number;
+  durasiHari: number;
+  upahHarian: number;
+  total: number;
+}
+
+export interface ProyekRecord {
+  id: string;
+  kodeProyek: string;
+  namaProyek: string;
+  kategori: ProyekCategory;
+  klienNama: string;
+  klienKontak: string;
+  klienAlamat: string;
+  statusProyek: 'penawaran_rab' | 'dp_terbayar' | 'sedang_dikerjakan' | 'selesai_pelunasan' | 'arsip';
+  dimensi: ProyekDimension;
+  rab: RabCostBreakdown;
+  rincianBahan: MaterialItem[];
+  rincianTukang: TukangItem[];
+  terminList: TerminStage[];
+  catatanSpesifikasi: string;
+  tanggalMulai: string;
+  targetSelesai: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ProyekProfile {
+  namaWorkshop: string;
+  penanggungJawab: string;
+  kontak: string;
+  alamatWorkshop: string;
+  bankRekening: string;
+  qrisPayload?: string;
+  headerSurat: string;
+  footerSurat: string;
+}
+
